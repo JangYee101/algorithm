@@ -32,6 +32,18 @@ void initArray(int arr[], int size) {
     }
 }
 
+void setArraySorted(int arr[], int size, int is_sorted) {
+    int i, j;
+    if(is_sorted) {
+        for(i=0;i<size;i++)
+            arr[i] = i;
+    }
+    else {
+        for(i=0,j=size;i<size;i++,j--)
+            arr[i] = j;
+    }
+}
+
 void showArray(int arr[], int size, char sp) {
     int i;
     for (i=0;i<size;i++) {
@@ -42,6 +54,7 @@ void showArray(int arr[], int size, char sp) {
 
 void commonTest(int arr[], int size, void (*sort_func) (int [], int)) {
     initArray(arr, size);
+    //setArraySorted(arr, size, 0);
     sort_func(arr, size);
     showArray(arr, size, '\n');
 }
