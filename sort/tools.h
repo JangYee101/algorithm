@@ -8,6 +8,9 @@
 *
 ================================================================*/
 
+#ifndef TOOLS_H
+#define TOOLS_H
+
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -55,8 +58,10 @@ void showArray(int arr[], int size, char sp) {
 void commonTest(int arr[], int size, void (*sort_func) (int [], int)) {
     initArray(arr, size);
     //setArraySorted(arr, size, 0);
+    showArray(arr, size, ' ');
     sort_func(arr, size);
     showArray(arr, size, '\n');
 }
 
 //int array[SIZE] = {56, 93, 2, 94, 47, 18, 85, 6, 41, 68, 95, 58, 14, 95, 86, 69, 72, 91, 18, 41};
+#endif
