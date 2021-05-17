@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<!-- saved from url=(0047)https://www.cnblogs.com/yjiyjige/p/3263858.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin-when-crossorigin">
+    <meta name="description" content="KMP算法应该是每一本《数据结构》书都会讲的，算是知名度最高的算法之一了，但很可惜，我大二那年压根就没看懂过~~~之后也在很多地方也都经常看到讲解KMP算法的文章，看久了好像也知道是怎么一回事，但总感">
+    <meta property="og:description" content="KMP算法应该是每一本《数据结构》书都会讲的，算是知名度最高的算法之一了，但很可惜，我大二那年压根就没看懂过~~~之后也在很多地方也都经常看到讲解KMP算法的文章，看久了好像也知道是怎么一回事，但总感">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>（原创）详解KMP算法 - 孤~影 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="https://common.cnblogs.com/favicon.svg" type="image/svg+xml">
+    
+    <link rel="stylesheet" href="./kmp_files/blog-common.min.css">
+    <link id="MainCss" rel="stylesheet" href="./kmp_files/bundle-thinkinside.min.css">
+    
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./kmp_files/bundle-thinkinside-mobile.min.css">
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/yjiyjige/rss">
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/yjiyjige/rsd.xml">
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/yjiyjige/wlwmanifest.xml">
+    <script src="./kmp_files/osd.js.下载"></script><script async="" src="./kmp_files/analytics.js.下载"></script><script type="text/javascript" src="./kmp_files/encoder.js.下载"></script><script>
+        var currentBlogId = 119457;
+        var currentBlogApp = 'yjiyjige';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'ThinkInside';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2013-08-17 08:49';
+        </script>
+    <script src="./kmp_files/jquery-2.2.0.min.js.下载"></script>
+    <script src="./kmp_files/blog-common.min.js.下载"></script><style type="text/css">.medium-zoom-overlay{position:fixed;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .3s;will-change:opacity}.medium-zoom--opened .medium-zoom-overlay{cursor:pointer;cursor:zoom-out;opacity:1}.medium-zoom-image{cursor:pointer;cursor:zoom-in;transition:transform .3s cubic-bezier(.2,0,.2,1)!important}.medium-zoom-image--hidden{visibility:hidden}.medium-zoom-image--opened{position:relative;cursor:pointer;cursor:zoom-out;will-change:transform}</style>
+    
+    
+    
+<meta http-equiv="origin-trial" content="A+b/H0b8RPXNaJgaNFpO0YOFuGK6myDQXlwnJB3SwzvNMfcndat4DZYMrP4ClJIzYWo3/yP2S+8FTZ/lpqbPAAEAAABueyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="><meta http-equiv="origin-trial" content="A9ZgbRtm4pU3oZiuNzOsKcC8ppFSZdcjP2qYcdQrFKVzkmiWH1kdYY1Mi9x7G8+PS8HV9Ha9Cz0gaMdKsiVZIgMAAAB7eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AxL6oBxcpn5rQDPKSAs+d0oxNyJYq2/4esBUh3Yx5z8QfcLu+AU8iFCXYRcr/CEEfDnkxxLTsvXPJFQBxHfvkgMAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A9KPtG5kl3oLTk21xqynDPGQ5t18bSOpwt0w6kGa6dEWbuwjpffmdUpR3W+faZDubGT+KIk2do0BX2ca16x8qAcAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A3HucHUo1oW9s+9kIKz8mLkbcmdaj5lxt3eiIMp1Nh49dkkBlg1Fhg4Fd/r0vL69mRRA36YutI9P/lJUfL8csQoAAACFeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A0OysezhLoCRYomumeYlubLurZTCmsjTb087OvtCy95jNM65cfEsbajrJnhaGwiTxhz38ZZbm+UhUwQuXfVPTg0AAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="AxoOxdZQmIoA1WeAPDixRAeWDdgs7ZtVFfH2y19ziTgD1iaHE5ZGz2UdSjubkWvob9C5PrjUfkWi4ZSLgWk3Xg8AAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A7+rMYR5onPnACrz+niKSeFdH3xw1IyHo2AZSHmxrofRk9w4HcQPMYcpBUKu6OQ6zsdxf4m/vqa6tG6Na4OLpAQAAAB4eyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AwfG8hAcHnPa/kJ1Co0EvG/K0F9l1s2JZGiDLt2mhC3QI5Fh4qmsmSwrWObZFbRC9ieDaSLU6lHRxhGUF/i9sgoAAACBeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiSW50ZXJlc3RDb2hvcnRBUEkiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AwQ7dCmHkvR6FuOFxAuNnktYSQrGbL4dF+eBkrwNLALc69Wr//PnO1yzns3pjUoCaYbKHtVcnng2hU+8OUm0PAYAAACHeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiSW50ZXJlc3RDb2hvcnRBUEkiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AysVDPGQTLD/Scn78x4mLwB1tMfje5jwUpAAzGRpWsr1NzoN7MTFhT3ClmImi2svDZA7V6nWGIV8YTPsSRTe0wYAAACHeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiSW50ZXJlc3RDb2hvcnRBUEkiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><script src="./kmp_files/pubads_impl_2021051001.js.下载" async=""></script><link rel="preload" href="./kmp_files/f.txt" as="script"><script type="text/javascript" src="./kmp_files/f.txt"></script><link rel="prefetch" href="https://dcbf44dc31fc189e4520dcf0eb4da805.safeframe.googlesyndication.com/safeframe/1-0-38/html/container.html"></head>
+<body class="has-navbar">
+    <a name="top"></a>
+    <div id="top_nav" class="navbar forpc">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding"><a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="./kmp_files/logo.svg" alt="博客园Logo"></a></li>
+                <li><a href="https://www.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-sitehome&#39;)">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-news&#39;)">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-q&#39;)">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-brands&#39;)">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-ing&#39;)">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-edu&#39;)">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3">
+                        <button type="submit" id="zzk_search_button">
+                            <img src="./kmp_files/search.svg" alt="搜索">
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔" style="display: none;">
+                        <img id="new_post_icon" class="navbar-icon" src="./kmp_files/newpost.svg" alt="写随笔">
+                    </a>
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客" style="display: none;">
+                        <img id="myblog_icon" class="navbar-icon" src="./kmp_files/myblog.svg" alt="我的博客">
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息" style="display: none;">
+                        <img id="msg_icon" class="navbar-icon" src="./kmp_files/message.svg" alt="短消息">
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown" style="display: none;">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="./kmp_files/avatar-default.svg" alt="用户头像">
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
+    简洁模式 <img id="navbar_lite_mode_on" src="./kmp_files/lite-mode-check.svg" class="hide"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+</a>
+                            <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/" style="display: inline;">注册</a>
+                    <a class="navbar-anonymous" href="javascript:void(0);" onclick="account.login()" style="display: inline;">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/yjiyjige/"><img id="blogLogo" src="./kmp_files/logo.gif" alt="返回主页"></a>		
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/yjiyjige/">孤~影</a>
+</h1>
+<h2>IT小小鸟~~~~</h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/yjiyjige/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E5%AD%A4~%E5%BD%B1">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/yjiyjige/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 20&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 118&nbsp; </span>
+<span id="stats-total-view-count">阅读 - 
+<span title="总阅读数: 322174">
+32万</span></span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/yjiyjige/p/3263858.html">
+    <span>（原创）详解KMP算法</span>
+    
+
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<p>KMP算法应该是每一本《数据结构》书都会讲的，算是知名度最高的算法之一了，但很可惜，我大二那年压根就没看懂过~~~</p>
+<p>之后也在很多地方也都经常看到讲解KMP算法的文章，看久了好像也知道是怎么一回事，但总感觉有些地方自己还是没有完全懂明白。这两天花了点时间总结一下，有点小体会，我希望可以通过我自己的语言来把这个算法的一些细节梳理清楚，也算是考验一下自己有真正理解这个算法。</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 18pt"><strong>什么是</strong><strong>KMP</strong><strong>算法：</strong></span></p>
+<p>KMP是三位大牛：D.E.Knuth、J.H.Morris和V.R.Pratt同时发现的。其中第一位就是《计算机程序设计艺术》的作者！！</p>
+<p>KMP算法要解决的问题就是在字符串（也叫主串）中的模式（pattern）定位问题。说简单点就是我们平时常说的关键字搜索。模式串就是关键字（接下来称它为P），如果它在一个主串（接下来称为T）中出现，就返回它的具体位置，否则返回-1（常用手段）。</p>
+<p align="center">&nbsp;<img src="./kmp_files/17083616-9b40c67ea22e449f813fb38fcfd3a4fb.png" alt=""></p>
+<p>首先，对于这个问题有一个很单纯的想法：从左到右一个个匹配，如果这个过程中有某个字符不匹配，就跳回去，将模式串向右移动一位。这有什么难的？</p>
+<p>我们可以这样初始化：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17083647-9dfd3e4a709c40dd98d9817927651960.png" alt=""></p>
+<p>之后我们只需要比较i指针指向的字符和j指针指向的字符是否一致。如果一致就都向后移动，如果不一致，如下图：</p>
+<p align="center"><img src="./kmp_files/17083659-e6718026bf4f48a0be2d5d6076be4c55.png" alt="">&nbsp;</p>
+<p>&nbsp;</p>
+<p>A和E不相等，那就把i指针移回第1位（假设下标从0开始），j移动到模式串的第0位，然后又重新开始这个步骤：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17083714-7de56d2c1cc84dbfa376cf410ba6f053.png" alt=""></p>
+<p>基于这个想法我们可以得到以下的程序：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: rgba(0, 128, 128, 1)"> 1</span> <span style="color: rgba(0, 128, 0, 1)">/**</span>
+<span style="color: rgba(0, 128, 128, 1)"> 2</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 3</span> <span style="color: rgba(0, 128, 0, 1)"> * 暴力破解法
+</span><span style="color: rgba(0, 128, 128, 1)"> 4</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 5</span> <span style="color: rgba(0, 128, 0, 1)"> * </span><span style="color: rgba(128, 128, 128, 1)">@param</span><span style="color: rgba(0, 128, 0, 1)"> ts 主串
+</span><span style="color: rgba(0, 128, 128, 1)"> 6</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 7</span> <span style="color: rgba(0, 128, 0, 1)"> * </span><span style="color: rgba(128, 128, 128, 1)">@param</span><span style="color: rgba(0, 128, 0, 1)"> ps 模式串
+</span><span style="color: rgba(0, 128, 128, 1)"> 8</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 9</span> <span style="color: rgba(0, 128, 0, 1)"> * </span><span style="color: rgba(128, 128, 128, 1)">@return</span><span style="color: rgba(0, 128, 0, 1)"> 如果找到，返回在主串中第一个字符出现的下标，否则为-1
+</span><span style="color: rgba(0, 128, 128, 1)">10</span> 
+<span style="color: rgba(0, 128, 128, 1)">11</span>  <span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">12</span> 
+<span style="color: rgba(0, 128, 128, 1)">13</span> <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> bf(String ts, String ps) {
+</span><span style="color: rgba(0, 128, 128, 1)">14</span> 
+<span style="color: rgba(0, 128, 128, 1)">15</span>     <span style="color: rgba(0, 0, 255, 1)">char</span>[] t =<span style="color: rgba(0, 0, 0, 1)"> ts.toCharArray();
+</span><span style="color: rgba(0, 128, 128, 1)">16</span> 
+<span style="color: rgba(0, 128, 128, 1)">17</span>     <span style="color: rgba(0, 0, 255, 1)">char</span>[] p =<span style="color: rgba(0, 0, 0, 1)"> ps.toCharArray();
+</span><span style="color: rgba(0, 128, 128, 1)">18</span> 
+<span style="color: rgba(0, 128, 128, 1)">19</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> i = 0; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 主串的位置</span>
+<span style="color: rgba(0, 128, 128, 1)">20</span> 
+<span style="color: rgba(0, 128, 128, 1)">21</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> j = 0; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 模式串的位置</span>
+<span style="color: rgba(0, 128, 128, 1)">22</span> 
+<span style="color: rgba(0, 128, 128, 1)">23</span>     <span style="color: rgba(0, 0, 255, 1)">while</span> (i &lt; t.length &amp;&amp; j &lt;<span style="color: rgba(0, 0, 0, 1)"> p.length) {
+</span><span style="color: rgba(0, 128, 128, 1)">24</span> 
+<span style="color: rgba(0, 128, 128, 1)">25</span>        <span style="color: rgba(0, 0, 255, 1)">if</span> (t[i] == p[j]) { <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 当两个字符相同，就比较下一个</span>
+<span style="color: rgba(0, 128, 128, 1)">26</span> 
+<span style="color: rgba(0, 128, 128, 1)">27</span>            i++<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">28</span> 
+<span style="color: rgba(0, 128, 128, 1)">29</span>            j++<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">30</span> 
+<span style="color: rgba(0, 128, 128, 1)">31</span>        } <span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+</span><span style="color: rgba(0, 128, 128, 1)">32</span> 
+<span style="color: rgba(0, 128, 128, 1)">33</span>            i = i - j + 1; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 一旦不匹配，i后退</span>
+<span style="color: rgba(0, 128, 128, 1)">34</span> 
+<span style="color: rgba(0, 128, 128, 1)">35</span>            j = 0; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> j归0</span>
+<span style="color: rgba(0, 128, 128, 1)">36</span> 
+<span style="color: rgba(0, 128, 128, 1)">37</span> <span style="color: rgba(0, 0, 0, 1)">       }
+</span><span style="color: rgba(0, 128, 128, 1)">38</span> 
+<span style="color: rgba(0, 128, 128, 1)">39</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">40</span> 
+<span style="color: rgba(0, 128, 128, 1)">41</span>     <span style="color: rgba(0, 0, 255, 1)">if</span> (j ==<span style="color: rgba(0, 0, 0, 1)"> p.length) {
+</span><span style="color: rgba(0, 128, 128, 1)">42</span> 
+<span style="color: rgba(0, 128, 128, 1)">43</span>        <span style="color: rgba(0, 0, 255, 1)">return</span> i -<span style="color: rgba(0, 0, 0, 1)"> j;
+</span><span style="color: rgba(0, 128, 128, 1)">44</span> 
+<span style="color: rgba(0, 128, 128, 1)">45</span>     } <span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+</span><span style="color: rgba(0, 128, 128, 1)">46</span> 
+<span style="color: rgba(0, 128, 128, 1)">47</span>        <span style="color: rgba(0, 0, 255, 1)">return</span> -1<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">48</span> 
+<span style="color: rgba(0, 128, 128, 1)">49</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">50</span> 
+<span style="color: rgba(0, 128, 128, 1)">51</span> }</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>上面的程序是没有问题的，但不够好！（想起我高中时候数字老师的一句话：我不能说你错，只能说你不对~~~）</p>
+<p>如果是人为来寻找的话，肯定不会再把i移动回第1位，<strong>因为主串匹配失败的位置前面除了第一个</strong><strong>A</strong><strong>之外再也没有A</strong><strong>了</strong>，我们为什么能知道主串前面只有一个A？<strong>因为我们已经知道前面三个字符都是匹配的！（这很重要）</strong>。移动过去肯定也是不匹配的！有一个想法，<strong>i</strong><strong>可以不动，我们只需要移动j</strong>即可，如下图：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17083828-cdb207f5460f4645982171e58571a741.png" alt=""></p>
+<p>上面的这种情况还是比较理想的情况，我们最多也就多比较了再次。但假如是在主串“SSSSSSSSSSSSSA”中查找“SSSSB”，比较到最后一个才知道不匹配，然后i回溯，这个的效率是显然是最低的。</p>
+<p>&nbsp;</p>
+<p>大牛们是无法忍受“暴力破解”这种低效的手段的，于是他们三个研究出了KMP算法。其思想就如同我们上边所看到的一样：“<span style="color: rgba(255, 0, 0, 1)"><strong>利用已经部分匹配这个有效信息，保持</strong><strong>i</strong><strong>指针不回溯，通过修改j</strong><strong>指针，让模式串尽量地移动到有效的位置</strong></span>。”</p>
+<p>&nbsp;</p>
+<p>所以，整个KMP的重点就在于<strong>当某一个字符与主串不匹配时，我们应该知道</strong><strong>j</strong><strong>指针要移动到哪</strong>？</p>
+<p>&nbsp;</p>
+<p>接下来我们自己来发现j的移动规律：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17083912-49365b7e67cd4877b2f501074dae68d2.png" alt=""></p>
+<p>如图：C和D不匹配了，我们要把j移动到哪？显然是第1位。为什么？因为前面有一个A相同啊：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17083929-a9ccfb08833e4cf1a42c30f05608f8f5.png" alt=""></p>
+<p>如下图也是一样的情况：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17084030-82e4b71b85a440c5a636d57503931415.png" alt=""></p>
+<p>可以把j指针移动到第2位，因为前面有两个字母是一样的：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17084037-cc3c34200809414e9421c316ceba2cda.png" alt=""></p>
+<p>至此我们可以大概看出一点端倪，当匹配失败时，j要移动的下一个位置k。存在着这样的性质：<strong>最前面的</strong><strong>k</strong><strong>个字符和j</strong><strong>之前的最后k</strong><strong>个字符是一样的</strong>。</p>
+<p>如果用数学公式来表示是这样的</p>
+<p align="center"><span style="font-size: 18pt">P[0 ~ k-1] == P[j-k ~ j-1]</span></p>
+<p>这个相当重要，如果觉得不好记的话，可以通过下图来理解：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17084056-66930855432b4357bafbf8d6c76c1840.png" alt=""></p>
+<p>弄明白了这个就应该可能明白为什么可以直接将j移动到k位置了。</p>
+<p>因为:</p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">当T[i] != P[j]时</span></p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">有T[i-j ~ i-1] == P[0 ~ j-1]</span></p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">由P[0 ~ k-1] == P[j-k ~ j-1]</span></p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">必然：T[i-k ~ i-1] == P[0 ~ k-1]</span></p>
+<p>公式很无聊，能看明白就行了，不需要记住。</p>
+<p>这一段只是为了证明我们为什么可以直接将j移动到k而无须再比较前面的k个字符。</p>
+<p>&nbsp;</p>
+<p>好，接下来就是重点了，怎么求这个（这些）k呢？因为在P的每一个位置都可能发生不匹配，也就是说我们要计算每一个位置j对应的k，所以用一个数组next来保存，<strong>next[j] = k</strong><strong>，表示当T[i] != P[j]</strong><strong>时，j</strong><strong>指针的下一个位置。</strong></p>
+<p>&nbsp;</p>
+<p>很多教材或博文在这个地方都是讲得比较含糊或是根本就一笔带过，甚至就是贴一段代码上来，为什么是这样求？怎么可以这样求？根本就没有说清楚。而这里恰恰是整个算法最关键的地方。</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: rgba(0, 128, 128, 1)"> 1</span> <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)">[] getNext(String ps) {
+</span><span style="color: rgba(0, 128, 128, 1)"> 2</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 3</span>     <span style="color: rgba(0, 0, 255, 1)">char</span>[] p =<span style="color: rgba(0, 0, 0, 1)"> ps.toCharArray();
+</span><span style="color: rgba(0, 128, 128, 1)"> 4</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 5</span>     <span style="color: rgba(0, 0, 255, 1)">int</span>[] next = <span style="color: rgba(0, 0, 255, 1)">new</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)">[p.length];
+</span><span style="color: rgba(0, 128, 128, 1)"> 6</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 7</span>     next[0] = -1<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)"> 8</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 9</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> j = 0<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">10</span> 
+<span style="color: rgba(0, 128, 128, 1)">11</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> k = -1<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">12</span> 
+<span style="color: rgba(0, 128, 128, 1)">13</span>     <span style="color: rgba(0, 0, 255, 1)">while</span> (j &lt; p.length - 1<span style="color: rgba(0, 0, 0, 1)">) {
+</span><span style="color: rgba(0, 128, 128, 1)">14</span> 
+<span style="color: rgba(0, 128, 128, 1)">15</span>        <span style="color: rgba(0, 0, 255, 1)">if</span> (k == -1 || p[j] ==<span style="color: rgba(0, 0, 0, 1)"> p[k]) {
+</span><span style="color: rgba(0, 128, 128, 1)">16</span> 
+<span style="color: rgba(0, 128, 128, 1)">17</span>            next[++j] = ++<span style="color: rgba(0, 0, 0, 1)">k;
+</span><span style="color: rgba(0, 128, 128, 1)">18</span> 
+<span style="color: rgba(0, 128, 128, 1)">19</span>        } <span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+</span><span style="color: rgba(0, 128, 128, 1)">20</span> 
+<span style="color: rgba(0, 128, 128, 1)">21</span>            k =<span style="color: rgba(0, 0, 0, 1)"> next[k];
+</span><span style="color: rgba(0, 128, 128, 1)">22</span> 
+<span style="color: rgba(0, 128, 128, 1)">23</span> <span style="color: rgba(0, 0, 0, 1)">       }
+</span><span style="color: rgba(0, 128, 128, 1)">24</span> 
+<span style="color: rgba(0, 128, 128, 1)">25</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">26</span> 
+<span style="color: rgba(0, 128, 128, 1)">27</span>     <span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> next;
+</span><span style="color: rgba(0, 128, 128, 1)">28</span> 
+<span style="color: rgba(0, 128, 128, 1)">29</span> }</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>这个版本的求next数组的算法应该是流传最广泛的，代码是很简洁。可是真的很让人摸不到头脑，它这样计算的依据到底是什么？</p>
+<p>好，先把这个放一边，我们自己来推导思路，现在要始终记住一点，<strong>next[j]</strong><strong>的值（也就是k）表示，当P[j] != T[i]</strong><strong>时，j</strong><strong>指针的下一步移动位置</strong>。</p>
+<p>先来看第一个：当j为0时，如果这时候不匹配，怎么办？</p>
+<p align="center">&nbsp;<img src="./kmp_files/17084258-efd2e95d3644427ebc0304ed3d7adefb.png" alt=""></p>
+<p>像上图这种情况，<strong>j</strong><strong>已经在最左边了，不可能再移动了，这时候要应该是i</strong><strong>指针后移</strong>。所以在代码中才会有next[0] = -1;这个初始化。</p>
+<p>如果是当j为1的时候呢？</p>
+<p align="center">&nbsp;<img src="./kmp_files/17084310-29f9f8dbb6034151a383e7ccf6f5583e.png" alt=""></p>
+<p>显然，<strong>j</strong><strong>指针一定是后移到0</strong><strong>位置的</strong>。因为它前面也就只有这一个位置了~~~</p>
+<p>&nbsp;</p>
+<p>下面这个是最重要的，请看如下图：</p>
+<p style="text-align: center">&nbsp;<img src="./kmp_files/17084327-8a3cdfab03094bfa9e5cace26796cae5.png" alt="">&nbsp;<img style="line-height: 1.5" src="./kmp_files/17084342-616036472ab546c082aa991004bb0034.png" alt="" width="394" height="168"></p>
+<p align="center">&nbsp;</p>
+<p>请仔细对比这两个图。</p>
+<p>我们发现一个规律：</p>
+<p style="margin-left: 30px"><span style="font-size: 18pt">当P[k] == P[j]时，</span></p>
+<p style="margin-left: 30px"><span style="font-size: 18pt">有next[j+1] == next[j] + 1</span></p>
+<p>其实这个是可以证明的：</p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">因为在P[j]之前已经有P[0 ~ k-1] == p[j-k ~ j-1]。（next[j] == k）</span></p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">这时候现有P[k] == P[j]，我们是不是可以得到P[0 ~ k-1] + P[k] == p[j-k ~ j-1] + P[j]。</span></p>
+<p style="margin-left: 30px"><span style="font-size: 14pt">即：P[0 ~ k] == P[j-k ~ j]，即next[j+1] == k + 1 == next[j] + 1。</span></p>
+<p>这里的公式不是很好懂，还是看图会容易理解些。</p>
+<p>&nbsp;</p>
+<p>那如果P[k] != P[j]呢？比如下图所示：</p>
+<p align="center"><img src="./kmp_files/17122358-fd7e52dd382c4268a8ff52b85bff465d.png" alt="">&nbsp;</p>
+<p>像这种情况，如果你从代码上看应该是这一句：k = next[k];为什么是这样子？你看下面应该就明白了。</p>
+<p align="center">&nbsp;<img src="./kmp_files/17122439-e349fed25e974e7886a27d18871ae48a.png" alt=""></p>
+<p>现在你应该知道为什么要k = next[k]了吧！像上边的例子，我们已经不可能找到[ A，B，A，B ]这个最长的后缀串了，但我们还是可能找到[ A，B ]、[ B ]这样的前缀串的。所以这个过程像不像在定位[ A，B，A，C ]这个串，当C和主串不一样了（也就是k位置不一样了），那当然是把指针移动到next[k]啦。</p>
+<p>&nbsp;</p>
+<p>有了next数组之后就一切好办了，我们可以动手写KMP算法了：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: rgba(0, 128, 128, 1)"> 1</span> <span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> KMP(String ts, String ps) {
+</span><span style="color: rgba(0, 128, 128, 1)"> 2</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 3</span>     <span style="color: rgba(0, 0, 255, 1)">char</span>[] t =<span style="color: rgba(0, 0, 0, 1)"> ts.toCharArray();
+</span><span style="color: rgba(0, 128, 128, 1)"> 4</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 5</span>     <span style="color: rgba(0, 0, 255, 1)">char</span>[] p =<span style="color: rgba(0, 0, 0, 1)"> ps.toCharArray();
+</span><span style="color: rgba(0, 128, 128, 1)"> 6</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 7</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> i = 0; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 主串的位置</span>
+<span style="color: rgba(0, 128, 128, 1)"> 8</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 9</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> j = 0; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 模式串的位置</span>
+<span style="color: rgba(0, 128, 128, 1)">10</span> 
+<span style="color: rgba(0, 128, 128, 1)">11</span>     <span style="color: rgba(0, 0, 255, 1)">int</span>[] next =<span style="color: rgba(0, 0, 0, 1)"> getNext(ps);
+</span><span style="color: rgba(0, 128, 128, 1)">12</span> 
+<span style="color: rgba(0, 128, 128, 1)">13</span>     <span style="color: rgba(0, 0, 255, 1)">while</span> (i &lt; t.length &amp;&amp; j &lt;<span style="color: rgba(0, 0, 0, 1)"> p.length) {
+</span><span style="color: rgba(0, 128, 128, 1)">14</span> 
+<span style="color: rgba(0, 128, 128, 1)">15</span>        <span style="color: rgba(0, 0, 255, 1)">if</span> (j == -1 || t[i] == p[j]) { <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 当j为-1时，要移动的是i，当然j也要归0</span>
+<span style="color: rgba(0, 128, 128, 1)">16</span> 
+<span style="color: rgba(0, 128, 128, 1)">17</span>            i++<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">18</span> 
+<span style="color: rgba(0, 128, 128, 1)">19</span>            j++<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">20</span> 
+<span style="color: rgba(0, 128, 128, 1)">21</span>        } <span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+</span><span style="color: rgba(0, 128, 128, 1)">22</span> 
+<span style="color: rgba(0, 128, 128, 1)">23</span>            <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> i不需要回溯了
+</span><span style="color: rgba(0, 128, 128, 1)">24</span> 
+<span style="color: rgba(0, 128, 128, 1)">25</span>            <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> i = i - j + 1;</span>
+<span style="color: rgba(0, 128, 128, 1)">26</span> 
+<span style="color: rgba(0, 128, 128, 1)">27</span>            j = next[j]; <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> j回到指定位置</span>
+<span style="color: rgba(0, 128, 128, 1)">28</span> 
+<span style="color: rgba(0, 128, 128, 1)">29</span> <span style="color: rgba(0, 0, 0, 1)">       }
+</span><span style="color: rgba(0, 128, 128, 1)">30</span> 
+<span style="color: rgba(0, 128, 128, 1)">31</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">32</span> 
+<span style="color: rgba(0, 128, 128, 1)">33</span>     <span style="color: rgba(0, 0, 255, 1)">if</span> (j ==<span style="color: rgba(0, 0, 0, 1)"> p.length) {
+</span><span style="color: rgba(0, 128, 128, 1)">34</span> 
+<span style="color: rgba(0, 128, 128, 1)">35</span>        <span style="color: rgba(0, 0, 255, 1)">return</span> i -<span style="color: rgba(0, 0, 0, 1)"> j;
+</span><span style="color: rgba(0, 128, 128, 1)">36</span> 
+<span style="color: rgba(0, 128, 128, 1)">37</span>     } <span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+</span><span style="color: rgba(0, 128, 128, 1)">38</span> 
+<span style="color: rgba(0, 128, 128, 1)">39</span>        <span style="color: rgba(0, 0, 255, 1)">return</span> -1<span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">40</span> 
+<span style="color: rgba(0, 128, 128, 1)">41</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">42</span> 
+<span style="color: rgba(0, 128, 128, 1)">43</span> }</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>和暴力破解相比，就改动了4个地方。其中最主要的一点就是，i不需要回溯了。</p>
+<p>&nbsp;</p>
+<p>最后，来看一下上边的算法存在的缺陷。来看第一个例子：</p>
+<p align="center"><img src="./kmp_files/17084712-f0d6998938764b309f61923452a2b20f.png" alt="">&nbsp;</p>
+<p>显然，当我们上边的算法得到的next数组应该是[ -1，0，0，1 ]</p>
+<p>所以下一步我们应该是把j移动到第1个元素咯：</p>
+<p align="center">&nbsp;<img src="./kmp_files/17084726-790fc1b2c48c411b8011eab9de692f6d.png" alt=""></p>
+<p>不难发现，<strong>这一步是完全没有意义的。因为后面的B已经不匹配了，那前面的B也一定是不匹配的</strong>，同样的情况其实还发生在第2个元素A上。</p>
+<p>显然，<strong>发生问题的原因在于P[j] == P[next[j]]</strong>。</p>
+<p>所以我们也只需要添加一个判断条件即可：</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="color: rgba(0, 0, 255, 1)">public</span> <span style="color: rgba(0, 0, 255, 1)">static</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)">[] getNext(String ps) {
+
+    </span><span style="color: rgba(0, 0, 255, 1)">char</span>[] p =<span style="color: rgba(0, 0, 0, 1)"> ps.toCharArray();
+
+    </span><span style="color: rgba(0, 0, 255, 1)">int</span>[] next = <span style="color: rgba(0, 0, 255, 1)">new</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)">[p.length];
+
+    next[</span>0] = -1<span style="color: rgba(0, 0, 0, 1)">;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">int</span> j = 0<span style="color: rgba(0, 0, 0, 1)">;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">int</span> k = -1<span style="color: rgba(0, 0, 0, 1)">;
+
+    </span><span style="color: rgba(0, 0, 255, 1)">while</span> (j &lt; p.length - 1<span style="color: rgba(0, 0, 0, 1)">) {
+
+       </span><span style="color: rgba(0, 0, 255, 1)">if</span> (k == -1 || p[j] ==<span style="color: rgba(0, 0, 0, 1)"> p[k]) {
+
+           </span><span style="color: rgba(0, 0, 255, 1)">if</span> (p[++j] == p[++k]) { <span style="color: rgba(0, 128, 0, 1)">//</span><span style="color: rgba(0, 128, 0, 1)"> 当两个字符相等时要跳过</span>
+<span style="color: rgba(0, 0, 0, 1)">
+              next[j] </span>=<span style="color: rgba(0, 0, 0, 1)"> next[k];
+
+           } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+
+              next[j] </span>=<span style="color: rgba(0, 0, 0, 1)"> k;
+
+           }
+
+       } </span><span style="color: rgba(0, 0, 255, 1)">else</span><span style="color: rgba(0, 0, 0, 1)"> {
+
+           k </span>=<span style="color: rgba(0, 0, 0, 1)"> next[k];
+
+       }
+
+    }
+
+    </span><span style="color: rgba(0, 0, 255, 1)">return</span><span style="color: rgba(0, 0, 0, 1)"> next;
+
+}</span>&nbsp;</pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./kmp_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>好了，至此。KMP算法也结束了。</p>
+<p>很奇怪，好像不是很难的东西怎么就把我困住这么久呢？</p>
+<p>仔细想想还是因为自己太浮躁了，以前总是草草应付，很多细节都没弄清楚，就以为自己懂了。结果就只能是似懂非懂的。要学东西真的需要静下心来。</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block"><div id="BlogPostCategory">
+    分类: 
+            <a href="https://www.cnblogs.com/yjiyjige/category/482002.html" target="_blank">数据结构</a></div>
+
+
+    <div id="blog_post_info">
+<div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(3263858,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+        <a id="green_channel_follow" onclick="follow(&#39;58e7947a-e8ae-e111-aa3f-842b2b196315&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./kmp_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./kmp_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/yjiyjige/" target="_blank"><img src="./kmp_files/u416010.jpg" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/yjiyjige/">孤~影</a><br>
+            <a href="https://home.cnblogs.com/u/yjiyjige/followees/">关注 - 4</a><br>
+            <a href="https://home.cnblogs.com/u/yjiyjige/followers/">粉丝 - 158</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;58e7947a-e8ae-e111-aa3f-842b2b196315&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(3263858,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">143</span>
+    </div>
+    <div class="buryit" onclick="votePost(3263858,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+    <div class="clear"></div>
+    <div id="post_next_prev">
+
+    <a href="https://www.cnblogs.com/yjiyjige/p/3258849.html" class="p_n_p_prefix">« </a> 上一篇：    <a href="https://www.cnblogs.com/yjiyjige/p/3258849.html" title="发布于 2013-08-15 08:42">七大排序的个人总结（三）</a>
+    <br>
+    <a href="https://www.cnblogs.com/yjiyjige/p/3308139.html" class="p_n_p_prefix">» </a> 下一篇：    <a href="https://www.cnblogs.com/yjiyjige/p/3308139.html" title="发布于 2013-09-08 10:50">（原创）高仿360云盘android端的UI实现</a>
+
+</div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2013-08-17 08:49</span>&nbsp;
+<a href="https://www.cnblogs.com/yjiyjige/">孤~影</a>&nbsp;
+阅读(<span id="post_view_count">272090</span>)&nbsp;
+评论(<span id="post_comment_count">75</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=3263858" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(3263858);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="./kmp_files/highlight.min.js.下载"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 119457, cb_blogApp = 'yjiyjige', cb_blogUserGuid = '58e7947a-e8ae-e111-aa3f-842b2b196315';
+    var cb_entryId = 3263858, cb_entryCreatedDate = '2013-08-17 08:49', cb_postType = 1;
+    updatePostStats(
+        [cb_entryId],
+        function(id, count) { $("#post_view_count").text(count) },
+        function(id, count) { $("#post_comment_count").text(count) })
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html#top">返回顶部</a></div>
+    <div id="comment_form_container" style="visibility: visible;"><div class="login_tips">
+    登录后才能查看或发表评论，立即 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return account.login(&#39;!comments&#39;);">登录</a> 或者
+    <a href="https://www.cnblogs.com/">逛逛</a> 博客园首页
+</div>
+</div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"><a href="https://www.aliyun.com/activity/daily/bestoffer?userCode=swh7dvlt" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-阿里云-cps&#39;)">【推荐】阿里云爆品销量榜单出炉，精选爆款产品低至0.55折</a><br><a href="https://brands.cnblogs.com/huawei" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-华为专区&#39;)">【推荐】7大类400多种组件，HarmonyOS鸿蒙三方库来了，赶紧收藏！</a><br><a href="http://www.uccpsoft.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-ucancode&#39;)">【推荐】大型组态、工控、仿真、CAD\GIS 50万行VC++源码免费下载!</a><br><a href="http://www.moojnn.com/?source=bokeyuan" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-魔镜&#39;)">【推荐】限时秒杀！国云大数据魔镜，企业级云分析平台</a><br></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="under-post-card">
+        <div id="div-gpt-ad-1592365906576-0" style="width: 300px; height: 250px;" data-google-query-id="CKDCyZShyPACFUWXvAod1IsCMA"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C1_0" width="300" height="250" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" allow="conversion-measurement &#39;src&#39;" data-google-container-id="1" style="border: 0px; vertical-align: bottom;" data-load-complete="true" src="./kmp_files/saved_resource.html"></iframe></div></div>
+    </div>
+    <div id="under_post_card1"><div class="under-post-card"><b>园子动态</b>：<br>· <a href="https://www.cnblogs.com/cmt/p/14585828.html" target="_blank">致园友们的一封检讨书：都是我们的错</a><br>· <a href="https://www.cnblogs.com/cmt/p/14595262.html" target="_blank">数据库实例 CPU 100% 引发全站故障</a><br>· <a href="https://www.cnblogs.com/cmt/p/14217355.html" target="_blank">发起一个开源项目：博客引擎 fluss</a><br></div></div>
+    <div id="cnblogs_c2" class="under-post-card">
+        <div id="div-gpt-ad-1592366332455-0" style="width: 468px; height: 60px;" data-google-query-id="CKHCyZShyPACFUWXvAod1IsCMA"><div id="google_ads_iframe_/1090369/C2_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C2_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C2_0" width="468" height="60" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" allow="conversion-measurement &#39;src&#39;" data-google-container-id="2" style="border: 0px; vertical-align: bottom;" data-load-complete="true" src="./kmp_files/saved_resource(1).html"></iframe></div></div>
+    </div>
+    <div id="under_post_card2"><div class="itnews under-post-card">
+    <b>最新新闻</b>：
+    <br>
+ ·          <a href="https://news.cnblogs.com/n/693827/" target="_blank">2399元买次时代主机！Xbox国行版正式公布：5月19日开订</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693826/" target="_blank">首发价近万元 微软Surface Duo跳水：到手价4500元</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693825/" target="_blank">马斯克旗下公司将培育恐龙：15年内可育种</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693824/" target="_blank">美国最大燃油管道商向黑客付赎金：给了500万美元加密货币</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693823/" target="_blank">3000%月收益！加密货币看完拨草了</a>
+        <br>
+    » <a href="https://news.cnblogs.com/" title="IT 新闻" target="_blank">更多新闻...</a>
+</div></div>
+    <div id="HistoryToday" class="under-post-card"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem"><!--done-->
+<h3 class="catListTitle">公告</h3>
+
+<div id="blog-news">
+    
+    <div id="profile_block">
+        昵称：
+        <a href="https://home.cnblogs.com/u/yjiyjige/">
+            孤~影
+        </a>
+        <br>
+        园龄：
+        <a href="https://home.cnblogs.com/u/yjiyjige/" title="入园时间：2012-06-05">
+            8年11个月
+        </a>
+        <br>
+        粉丝：
+        <a href="https://home.cnblogs.com/u/yjiyjige/followers/">
+            158
+        </a>
+        <br>
+        关注：
+        <a href="https://home.cnblogs.com/u/yjiyjige/followees/">
+            4
+        </a>
+        <div id="p_b_follow">
+<a href="javascript:void(0)" onclick="follow(&#39;58e7947a-e8ae-e111-aa3f-842b2b196315&#39;)">+加关注</a></div>
+        <script>getFollowStatus('58e7947a-e8ae-e111-aa3f-842b2b196315');</script>
+    </div>
+</div>
+
+</div>
+<div id="sidebar_c3"></div>
+			<div id="blog-calendar" style="">
+
+<table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar" border="0">
+    <tbody>
+        <tr>
+            <td colspan="7">
+                <table class="CalTitle" cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2021/04/14&#39;); return false;">&lt;</a>
+                            </td>
+                            <td align="center">2021年5月</td>
+                            <td align="right" class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2021/06/14&#39;); return false;">&gt;</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    <tr>
+        <th class="CalDayHeader" align="center" abbr="日" scope="col">日</th>
+        <th class="CalDayHeader" align="center" abbr="一" scope="col">一</th>
+        <th class="CalDayHeader" align="center" abbr="二" scope="col">二</th>
+        <th class="CalDayHeader" align="center" abbr="三" scope="col">三</th>
+        <th class="CalDayHeader" align="center" abbr="四" scope="col">四</th>
+        <th class="CalDayHeader" align="center" abbr="五" scope="col">五</th>
+        <th class="CalDayHeader" align="center" abbr="六" scope="col">六</th>
+    </tr>
+            <tr>
+                            <td class="CalOtherMonthDay" align="center">25</td>
+                            <td class="CalOtherMonthDay" align="center">26</td>
+                            <td class="CalOtherMonthDay" align="center">27</td>
+                            <td class="CalOtherMonthDay" align="center">28</td>
+                            <td class="CalOtherMonthDay" align="center">29</td>
+                            <td class="CalOtherMonthDay" align="center">30</td>
+                    <td class="CalWeekendDay" align="center">
+                        1
+                    </td>
+            </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            2
+                        </td>
+                            <td class="" align="center">
+                                3
+                            </td>
+                            <td class="" align="center">
+                                4
+                            </td>
+                            <td class="" align="center">
+                                5
+                            </td>
+                            <td class="" align="center">
+                                6
+                            </td>
+                            <td class="" align="center">
+                                7
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            8
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            9
+                        </td>
+                            <td class="" align="center">
+                                10
+                            </td>
+                            <td class="" align="center">
+                                11
+                            </td>
+                            <td class="" align="center">
+                                12
+                            </td>
+                            <td class="" align="center">
+                                13
+                            </td>
+                            <td class="CalTodayDay" align="center">
+                                14
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            15
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            16
+                        </td>
+                            <td class="" align="center">
+                                17
+                            </td>
+                            <td class="" align="center">
+                                18
+                            </td>
+                            <td class="" align="center">
+                                19
+                            </td>
+                            <td class="" align="center">
+                                20
+                            </td>
+                            <td class="" align="center">
+                                21
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            22
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            23
+                        </td>
+                            <td class="" align="center">
+                                24
+                            </td>
+                            <td class="" align="center">
+                                25
+                            </td>
+                            <td class="" align="center">
+                                26
+                            </td>
+                            <td class="" align="center">
+                                27
+                            </td>
+                            <td class="" align="center">
+                                28
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            29
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            30
+                        </td>
+                            <td class="" align="center">
+                                31
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                1
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                2
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                3
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                4
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            5
+                        </td>
+                </tr>
+    </tbody>
+</table></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><!-- 搜索 -->
+<div id="sidebar_search" class="sidebar-block">
+    <div id="sidebar_search" class="mySearch">
+        <h3 class="catListTitle">搜索</h3>
+        <div id="sidebar_search_box">
+            <div id="widget_my_zzk" class="div_my_zzk">
+                <input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk">
+            </div>
+            <div id="widget_my_google" class="div_my_zzk">
+                <input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 常用链接 -->
+<div id="sidebar_shortcut" class="sidebar-block"><div class="catListLink">
+<h3 class="catListTitle">
+常用链接
+</h3>
+<ul>
+    
+<li><a href="https://www.cnblogs.com/yjiyjige/p/" title="我的博客的随笔列表">我的随笔</a></li>
+<li><a href="https://www.cnblogs.com/yjiyjige/MyComments.html" title="我的发表过的评论列表">我的评论</a></li>
+<li><a href="https://www.cnblogs.com/yjiyjige/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li>
+<li><a href="https://www.cnblogs.com/yjiyjige/RecentComments.html" title="我的博客的评论列表">最新评论</a></li>
+<li><a href="https://www.cnblogs.com/yjiyjige/tag/" title="我的博客的标签列表">我的标签</a></li>
+
+</ul>
+</div>
+
+</div>
+
+<!-- 最新随笔 -->
+
+
+<!-- 我的标签 -->
+<div id="sidebar_toptags" class="sidebar-block"><div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+        <li>
+            <a href="https://www.cnblogs.com/yjiyjige/tag/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">数据结构<span class="tag-count">(1)</span></a>
+        </li>
+    
+
+</ul>
+</div>
+
+</div>
+
+<!-- 积分与排名 -->
+
+
+<!-- 随笔分类、随笔档案、文章分类、新闻分类、相册、链接 -->
+<div id="sidebar_categories">
+
+    <div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+        <h3 class="catListTitle">
+            
+随笔分类
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/category/433613.html" rel="" target="">
+    Android学习笔记(8)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/category/482002.html" rel="" target="">
+    数据结构(7)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/category/441787.html" rel="" target="">
+    学习ing(3)
+</a>
+ 
+
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+    <div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+        <h3 class="catListTitle">
+            
+随笔档案
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2013/09.html" rel="" target="">
+    2013年9月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2013/08.html" rel="" target="">
+    2013年8月(6)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2013/07.html" rel="" target="">
+    2013年7月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2013/06.html" rel="" target="">
+    2013年6月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2013/05.html" rel="" target="">
+    2013年5月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2013/04.html" rel="" target="">
+    2013年4月(2)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2012/12.html" rel="" target="">
+    2012年12月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2012/11.html" rel="" target="">
+    2012年11月(3)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/yjiyjige/archive/2012/09.html" rel="" target="">
+    2012年9月(1)
+</a>
+ 
+
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+</div>
+
+<!-- 最新评论 -->
+<div id="sidebar_recentcomments" class="sidebar-block"><div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div class="RecentCommentBlock">
+        <ul>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">1. Re:（原创）详解KMP算法</a></li>
+                    <li class="recent_comment_body">感觉 while (i &lt; t.length &amp;&amp; j &lt; p.length)可以改成 while (i &lt; (t.length-p.length) &amp;&amp; j &lt; p.length)...</li>
+                    <li class="recent_comment_author">--茶叶在奋斗</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">2. Re:（原创）详解KMP算法</a></li>
+                    <li class="recent_comment_body"><p>感谢分享，有受到启发。</p>
+</li>
+                    <li class="recent_comment_author">--总之就是很懵逼</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">3. Re:（原创）详解KMP算法</a></li>
+                    <li class="recent_comment_body"><p>说实话，我觉得next数组应该改名叫prev数组更易懂</p>
+</li>
+                    <li class="recent_comment_author">--Ahacad</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">4. Re:（原创）详解KMP算法</a></li>
+                    <li class="recent_comment_body"><p>我也是 看了半天看不懂  next[j+1] == next[j] + 1 怎么来的。。。。</p>
+</li>
+                    <li class="recent_comment_author">--陌路人丁</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">5. Re:（原创）详解KMP算法</a></li>
+                    <li class="recent_comment_body"><p>感谢作者的分享！</p>
+</li>
+                    <li class="recent_comment_author">--挠到头秃</li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+
+<!-- 阅读排行榜 -->
+<div id="sidebar_topviewedposts" class="sidebar-block"><div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">
+                            1. （原创）详解KMP算法(272064)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3242329.html">
+                            2. Android学习笔记——Bluetooth的使用(12711)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/archive/2013/04/20/3032559.html">
+                            3. 算法练习之矩形的交集与并集的计算(6925)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3308139.html">
+                            4. （原创）高仿360云盘android端的UI实现(6471)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3258849.html">
+                            5. 七大排序的个人总结（三）(3066)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<!-- 评论排行榜 -->
+<div id="sidebar_topcommentedposts" class="sidebar-block"><div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">
+                            1. （原创）详解KMP算法(75)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3308139.html">
+                            2. （原创）高仿360云盘android端的UI实现(10)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3258849.html">
+                            3. 七大排序的个人总结（三）(6)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3256138.html">
+                            4. 七大排序的个人总结（一）(6)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/yjiyjige/p/3256700.html">
+                            5. 七大排序的个人总结（二）(5)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<!-- 推荐排行榜 -->
+<div id="sidebar_topdiggedposts" class="sidebar-block">
+<div id="topdigg_posts_wrap">
+    <div class="catListView">
+        <h3 class="catListTitle">推荐排行榜</h3>
+        <div id="TopDiggPostsBlock">
+            <ul style="word-break: break-all">
+                        <li>
+                            <a href="https://www.cnblogs.com/yjiyjige/p/3263858.html">
+                                1. （原创）详解KMP算法(143)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/yjiyjige/p/3256138.html">
+                                2. 七大排序的个人总结（一）(5)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/yjiyjige/p/3333875.html">
+                                3. （原创 开源）AppWidge的使用—桌面便利贴(4)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/yjiyjige/p/3308139.html">
+                                4. （原创）高仿360云盘android端的UI实现(4)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/yjiyjige/p/3258849.html">
+                                5. 七大排序的个人总结（三）(4)
+                            </a>
+                        </li>
+            </ul>
+        </div>
+    </div>
+</div></div></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright © 2021 孤~影
+<br><span id="poweredby">Powered by .NET 5.0 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    
+
+    <input type="hidden" id="antiforgery_token" value="CfDJ8L-rpLgFVEJMgssCVvNUAjvDSYsU0LK2HpFx87ErN61aLXiVp8OBvdhjxO90WLIDMJE_PYNgA6yuddR0Fxdwfu4BA7kzW6gJSfE6xIJfVPQG_4_A0nykgDg2gAxnMx2wi3ygJFLWvpjXMROiWzFp-fE">
+
+
+<iframe id="google_osd_static_frame_2017817604519" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./kmp_files/saved_resource(2).html"></iframe></body></html>

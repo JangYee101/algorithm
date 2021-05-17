@@ -1,0 +1,1145 @@
+<!DOCTYPE html>
+<!-- saved from url=(0050)https://www.cnblogs.com/lanhaicode/p/10546257.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="referrer" content="origin-when-crossorigin">
+    <meta name="description" content="博客园的随笔大概率不会更新了 但评论每一条都会看 堆排序 之前的随笔写了栈（顺序栈、链式栈）、队列（循环队列、链式队列）、链表、二叉树，这次随笔来写堆 1、什么是堆？ 堆是一种非线性结构，（本篇随笔主">
+    <meta property="og:description" content="博客园的随笔大概率不会更新了 但评论每一条都会看 堆排序 之前的随笔写了栈（顺序栈、链式栈）、队列（循环队列、链式队列）、链表、二叉树，这次随笔来写堆 1、什么是堆？ 堆是一种非线性结构，（本篇随笔主">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>堆排序（大顶堆、小顶堆）----C语言 - 蓝海人 - 博客园</title>
+    <link id="favicon" rel="shortcut icon" href="https://common.cnblogs.com/favicon.svg" type="image/svg+xml">
+    
+    <link rel="stylesheet" href="./heap_sort_files/blog-common.min.css">
+    <link id="MainCss" rel="stylesheet" href="./heap_sort_files/bundle-simplememory.min.css">
+    <link type="text/css" rel="stylesheet" href="./heap_sort_files/custom.css">
+    <link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./heap_sort_files/bundle-SimpleMemory-mobile.min.css">
+    
+    <link type="application/rss+xml" rel="alternate" href="https://www.cnblogs.com/lanhaicode/rss">
+    <link type="application/rsd+xml" rel="EditURI" href="https://www.cnblogs.com/lanhaicode/rsd.xml">
+    <link type="application/wlwmanifest+xml" rel="wlwmanifest" href="https://www.cnblogs.com/lanhaicode/wlwmanifest.xml">
+    <script src="./heap_sort_files/osd.js.下载"></script><script async="" src="./heap_sort_files/analytics.js.下载"></script><script type="text/javascript" src="./heap_sort_files/encoder.js.下载"></script><script>
+        var currentBlogId = 489152;
+        var currentBlogApp = 'lanhaicode';
+        var cb_enable_mathjax = false;
+        var isLogined = false;
+        var isBlogOwner = false;
+        var skinName = 'SimpleMemory';
+        var visitorUserId = '';
+    </script>
+        <script>
+            var currentPostDateAdded = '2019-03-20 09:28';
+        </script>
+    <script src="./heap_sort_files/jquery-2.2.0.min.js.下载"></script>
+    <script src="./heap_sort_files/blog-common.min.js.下载"></script><style type="text/css">.medium-zoom-overlay{position:fixed;top:0;right:0;bottom:0;left:0;opacity:0;transition:opacity .3s;will-change:opacity}.medium-zoom--opened .medium-zoom-overlay{cursor:pointer;cursor:zoom-out;opacity:1}.medium-zoom-image{cursor:pointer;cursor:zoom-in;transition:transform .3s cubic-bezier(.2,0,.2,1)!important}.medium-zoom-image--hidden{visibility:hidden}.medium-zoom-image--opened{position:relative;cursor:pointer;cursor:zoom-out;will-change:transform}</style>
+    
+    
+    
+<link rel="shortcut icon" href="https://files-cdn.cnblogs.com/files/lanhaicode/logo.ico"><meta http-equiv="origin-trial" content="A+b/H0b8RPXNaJgaNFpO0YOFuGK6myDQXlwnJB3SwzvNMfcndat4DZYMrP4ClJIzYWo3/yP2S+8FTZ/lpqbPAAEAAABueyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzVGhpcmRQYXJ0eSI6dHJ1ZX0="><meta http-equiv="origin-trial" content="A9ZgbRtm4pU3oZiuNzOsKcC8ppFSZdcjP2qYcdQrFKVzkmiWH1kdYY1Mi9x7G8+PS8HV9Ha9Cz0gaMdKsiVZIgMAAAB7eyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AxL6oBxcpn5rQDPKSAs+d0oxNyJYq2/4esBUh3Yx5z8QfcLu+AU8iFCXYRcr/CEEfDnkxxLTsvXPJFQBxHfvkgMAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A9KPtG5kl3oLTk21xqynDPGQ5t18bSOpwt0w6kGa6dEWbuwjpffmdUpR3W+faZDubGT+KIk2do0BX2ca16x8qAcAAACBeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiVHJ1c3RUb2tlbnMiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="A3HucHUo1oW9s+9kIKz8mLkbcmdaj5lxt3eiIMp1Nh49dkkBlg1Fhg4Fd/r0vL69mRRA36YutI9P/lJUfL8csQoAAACFeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A0OysezhLoCRYomumeYlubLurZTCmsjTb087OvtCy95jNM65cfEsbajrJnhaGwiTxhz38ZZbm+UhUwQuXfVPTg0AAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="AxoOxdZQmIoA1WeAPDixRAeWDdgs7ZtVFfH2y19ziTgD1iaHE5ZGz2UdSjubkWvob9C5PrjUfkWi4ZSLgWk3Xg8AAACLeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1N1YmRvbWFpbiI6dHJ1ZSwiaXNUaGlyZFBhcnR5Ijp0cnVlfQ=="><meta http-equiv="origin-trial" content="A7+rMYR5onPnACrz+niKSeFdH3xw1IyHo2AZSHmxrofRk9w4HcQPMYcpBUKu6OQ6zsdxf4m/vqa6tG6Na4OLpAQAAAB4eyJvcmlnaW4iOiJodHRwczovL2ltYXNkay5nb29nbGVhcGlzLmNvbTo0NDMiLCJmZWF0dXJlIjoiQ29udmVyc2lvbk1lYXN1cmVtZW50IiwiZXhwaXJ5IjoxNjI2MjIwNzk5LCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AwfG8hAcHnPa/kJ1Co0EvG/K0F9l1s2JZGiDLt2mhC3QI5Fh4qmsmSwrWObZFbRC9ieDaSLU6lHRxhGUF/i9sgoAAACBeyJvcmlnaW4iOiJodHRwczovL2RvdWJsZWNsaWNrLm5ldDo0NDMiLCJmZWF0dXJlIjoiSW50ZXJlc3RDb2hvcnRBUEkiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AwQ7dCmHkvR6FuOFxAuNnktYSQrGbL4dF+eBkrwNLALc69Wr//PnO1yzns3pjUoCaYbKHtVcnng2hU+8OUm0PAYAAACHeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXN5bmRpY2F0aW9uLmNvbTo0NDMiLCJmZWF0dXJlIjoiSW50ZXJlc3RDb2hvcnRBUEkiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><meta http-equiv="origin-trial" content="AysVDPGQTLD/Scn78x4mLwB1tMfje5jwUpAAzGRpWsr1NzoN7MTFhT3ClmImi2svDZA7V6nWGIV8YTPsSRTe0wYAAACHeyJvcmlnaW4iOiJodHRwczovL2dvb2dsZXRhZ3NlcnZpY2VzLmNvbTo0NDMiLCJmZWF0dXJlIjoiSW50ZXJlc3RDb2hvcnRBUEkiLCJleHBpcnkiOjE2MjYyMjA3OTksImlzU3ViZG9tYWluIjp0cnVlLCJpc1RoaXJkUGFydHkiOnRydWV9"><script src="./heap_sort_files/pubads_impl_2021051001.js.下载" async=""></script><link rel="preload" href="./heap_sort_files/f.txt" as="script"><script type="text/javascript" src="./heap_sort_files/f.txt"></script><link rel="prefetch" href="https://c7379fa83e055f469a23bbc2fb0450cc.safeframe.googlesyndication.com/safeframe/1-0-38/html/container.html"><link rel="prefetch" href="https://tpc.googlesyndication.com/safeframe/1-0-38/html/container.html"></head>
+<body class="no-navbar">
+    <a name="top"></a>
+    <div id="top_nav" class="navbar forpc navbar-custom">
+        <nav id="nav_main" class="navbar-main">
+            <ul id="nav_left" class="navbar-list navbar-left">
+                <li class="navbar-branding"><a href="https://www.cnblogs.com/" title="开发者的网上家园"><img src="./heap_sort_files/logo.svg" alt="博客园Logo"></a></li>
+                <li><a href="https://www.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-sitehome&#39;)">首页</a></li>
+                <li><a href="https://news.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-news&#39;)">新闻</a></li>
+                <li><a href="https://q.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-q&#39;)">博问</a></li>
+                <li><a id="nav_brandzone" href="https://brands.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-brands&#39;)">专区</a></li>
+                <li><a href="https://ing.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-ing&#39;)">闪存</a></li>
+                <li><a href="https://edu.cnblogs.com/" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;skin-navbar-edu&#39;)">班级</a></li>
+            </ul>
+            <ul id="nav_right" class="navbar-list navbar-right">
+                <li>
+                    <form id="zzk_search" class="navbar-search" action="https://zzk.cnblogs.com/s" method="get">
+                        <input name="w" id="zzk_search_input" placeholder="代码改变世界" type="text" tabindex="3">
+                        <button type="submit" id="zzk_search_button">
+                            <img src="./heap_sort_files/search.svg" alt="搜索">
+                        </button>
+                    </form>
+                </li>
+                <li id="navbar_login_status" class="navbar-list">
+                    <a class="navbar-user-info navbar-blog" href="https://i.cnblogs.com/EditPosts.aspx?opt=1" alt="写随笔" title="写随笔" style="display: none;">
+                        <img id="new_post_icon" class="navbar-icon" src="./heap_sort_files/newpost.svg" alt="写随笔">
+                    </a>
+                    <a id="navblog-myblog-icon" class="navbar-user-info navbar-blog" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx" alt="我的博客" title="我的博客" style="display: none;">
+                        <img id="myblog_icon" class="navbar-icon" src="./heap_sort_files/myblog.svg" alt="我的博客">
+                    </a>
+                    <a class="navbar-user-info navbar-message navbar-icon-wrapper" href="https://msg.cnblogs.com/" alt="短消息" title="短消息" style="display: none;">
+                        <img id="msg_icon" class="navbar-icon" src="./heap_sort_files/message.svg" alt="短消息">
+                        <span id="msg_count" style="display: none"></span>
+                    </a>
+                    <div id="user_info" class="navbar-user-info dropdown" style="display: none;">
+                        <a class="dropdown-button" href="https://home.cnblogs.com/">
+                            <img id="user_icon" class="navbar-avatar" src="./heap_sort_files/avatar-default.svg" alt="用户头像">
+                        </a>
+                        <div class="dropdown-menu">
+                            <a id="navblog-myblog-text" href="https://passport.cnblogs.com/GetBlogApplyStatus.aspx">我的博客</a>
+                            <a href="https://home.cnblogs.com/">我的园子</a>
+                            <a href="https://account.cnblogs.com/settings/account">账号设置</a>
+                            <a href="javascript:void(0)" id="navbar_lite_mode_toggle" title="简洁模式会使用简洁款皮肤显示所有博客">
+    简洁模式 <img id="navbar_lite_mode_on" src="./heap_sort_files/lite-mode-check.svg" class="hide"><span id="navbar_lite_mode_spinner" class="hide">...</span>
+</a>
+                            <a href="javascript:void(0)" onclick="account.logout();">退出登录</a>
+                        </div>
+                    </div>
+                    <a class="navbar-anonymous" href="https://account.cnblogs.com/signup/" style="display: inline;">注册</a>
+                    <a class="navbar-anonymous" href="javascript:void(0);" onclick="account.login()" style="display: inline;">登录</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    
+    <!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+        <a id="lnkBlogLogo" href="https://www.cnblogs.com/lanhaicode/"><img id="blogLogo" src="./heap_sort_files/logo.gif" alt="返回主页"></a>		
+		
+<!--done-->
+<h1 class="bounceInLeft animated"><a id="Header1_HeaderTitle" class="headermaintitle HeaderMainTitle" href="https://www.cnblogs.com/lanhaicode/">蓝海人</a>
+</h1>
+<h2 class="bounceInRight animated"></h2>
+
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="https://www.cnblogs.com/">
+博客园</a>
+</li>
+<li>
+<a id="blog_nav_myhome" class="menu" href="https://www.cnblogs.com/lanhaicode/">
+首页</a>
+</li>
+<li>
+
+<a id="blog_nav_newpost" class="menu" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">
+新随笔</a>
+</li>
+<li>
+<a id="blog_nav_contact" class="menu" href="https://msg.cnblogs.com/send/%E8%93%9D%E6%B5%B7%E4%BA%BA">
+联系</a></li>
+<li>
+<a id="blog_nav_rss" class="menu" href="javascript:void(0)" data-rss="https://www.cnblogs.com/lanhaicode/rss/">
+订阅</a>
+<!--<partial name="./Shared/_XmlLink.cshtml" model="Model" /></li>--></li>
+<li>
+<a id="blog_nav_admin" class="menu" href="https://i.cnblogs.com/">
+管理</a>
+</li>
+</ul>
+
+
+		<div class="blogStats">
+			<span id="stats_post_count">随笔 - 42&nbsp; </span>
+<span id="stats_article_count">文章 - 0&nbsp; </span>
+<span id="stats-comment_count">评论 - 80&nbsp; </span>
+<span id="stats-total-view-count">阅读 - 
+<span title="总阅读数: 546006">
+54万</span></span>
+
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		<div id="post_detail">
+    <!--done-->
+    <div id="topics">
+        <div class="post">
+            <h1 class="postTitle">
+                
+<a id="cb_post_title_url" class="postTitle2 vertical-middle" href="https://www.cnblogs.com/lanhaicode/p/10546257.html">
+    <span>堆排序（大顶堆、小顶堆）----C语言</span>
+    
+
+
+
+</a>
+
+            </h1>
+            <div class="clear"></div>
+            <div class="postBody">
+                <div id="cnblogs_post_body" class="blogpost-body blogpost-body-html">
+<h1><span style="font-size: 18px"><strong>&nbsp;博客园的随笔大概率不会更新了</strong></span></h1>
+<h1><span style="font-size: 18px">&nbsp;但评论每一条都会看</span></h1>
+<h1>堆排序</h1>
+<p><span style="font-family: 幼圆; font-size: 16px">之前的随笔写了栈（<a href="https://www.cnblogs.com/lanhaicode/p/10453602.html" target="_blank">顺序栈</a>、<a href="https://www.cnblogs.com/lanhaicode/p/10463156.html" target="_blank">链式栈</a>）、队列（<a href="https://www.cnblogs.com/lanhaicode/p/10299811.html" target="_blank">循环队列</a>、<a href="https://www.cnblogs.com/lanhaicode/p/10432004.html" target="_blank">链式队列</a>）、<a href="https://www.cnblogs.com/lanhaicode/p/10304567.html" target="_blank">链表</a>、<a href="https://www.cnblogs.com/lanhaicode/p/10358736.html" target="_blank">二叉树</a>，这次随笔来写堆</span></p>
+<h2>1、什么是堆？</h2>
+<p><span style="font-family: 幼圆; font-size: 16px">堆是一种<strong>非线性结构</strong>，（本篇随笔主要分析堆的数组实现）可以把堆看作一个数组，也可以被看作一个完全二叉树，通俗来讲<strong>堆其实就是利用完全二叉树的结构来维护的一维数组</strong></span></p>
+<p><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">按照堆的特点可以把堆分为<strong>大顶堆</strong>和<strong>小顶堆</strong></span></span></p>
+<p><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">大顶堆：每个结点的值都<strong>大于</strong>或<strong>等于</strong>其左右孩子结点的值</span></span></p>
+<p><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">小顶堆：每个结点的值都<strong>小于</strong>或<strong>等于</strong>其左右孩子结点的值</span></span></p>
+<p><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">（<span style="text-decoration: underline">堆的这种特性非常的有用，堆常常被当做优先队列使用，因为可以快速的访问到“最重要”的元素</span>）</span></span></p>
+<p>&nbsp;</p>
+<h2>2、堆的特点（数组实现）</h2>
+<p><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px"><img src="./heap_sort_files/1590962-20190318210706226-1501863648.png" alt="" class="medium-zoom-image"></span></span></p>
+<p>&nbsp;</p>
+<p>（图片来源：https://www.cnblogs.com/chengxiao/p/6129630.html）</p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">我们对堆中的结点按层进行编号，将这种逻辑结构映射到数组中就是下面这个样子</span></p>
+<p align="left"><img src="./heap_sort_files/1590962-20190318210726142-1883287792.png" alt=""></p>
+<p align="left">（图片来源：https://www.cnblogs.com/chengxiao/p/6129630.html）</p>
+<p align="left">&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">我们用简单的公式来描述一下堆的定义就是：（读者可以对照上图的数组来理解下面两个公式）</span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px"><strong>大顶堆：</strong>arr[i] &gt;= arr[2i+1] &amp;&amp; arr[i] &gt;= arr[2i+2]&nbsp;</span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px"><strong>小顶堆：</strong>arr[i] &lt;= arr[2i+1] &amp;&amp; arr[i] &lt;= arr[2i+2]&nbsp;</span></p>
+<p align="left">&nbsp;</p>
+<h2>3、堆和普通树的区别</h2>
+<p><span style="font-family: 幼圆; font-size: 16px">内存占用：</span></p>
+<p><span style="font-family: 幼圆; font-size: 16px">普通树占用的内存空间比它们存储的数据要多。你必须为节点对象以及左/右子节点指针分配额外的内存。堆仅仅使用数组，且不使用指针</span></p>
+<p><span style="font-family: 幼圆; font-size: 16px">（<span style="text-decoration: underline">可以使用普通树来模拟堆，但空间浪费比较大，不太建议这么做</span>）</span></p>
+<p>&nbsp;</p>
+<div>
+<div><span style="font-family: 幼圆; font-size: 16px">平衡<strong>：</strong></span></div>
+<div><span style="font-family: 幼圆; font-size: 16px">二叉搜索树必须是“平衡”的情况下，其大部分操作的复杂度才能达到<strong>O(nlog<sub>2</sub>n)</strong>。你可以按任意顺序位置插入/删除数据，或者使用 AVL 树或者红黑树，但是在堆中实际上不需要整棵树都是有序的。我们只需要满足对属性即可，所以在堆中平衡不是问题。因为堆中数据的组织方式可以保证<strong>O(nlog<sub>2</sub>n)</strong> 的性能</span></div>
+<br><span style="font-family: 幼圆; font-size: 16px">搜索：</span></div>
+<div><span style="font-family: 幼圆; font-size: 16px">在二叉树中搜索会很快，但是在堆中搜索会很慢。在堆中搜索不是第一优先级，因为使用堆的目的是将最大（或者最小）的节点放在最前面，从而快速的进行相关插入、删除操作</span></div>
+<div>&nbsp;</div>
+<h2>4、堆排序的过程</h2>
+<p><span style="font-family: 幼圆; font-size: 16px">先了解下<strong>堆排序</strong>的基本思想：</span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">将待排序序列构造成一个大顶堆，此时，整个序列的最大值就是堆顶的根节点。将其与末尾元素进行交换，此时末尾就为最大值。然后将剩余n-1个元素重新构造成一个堆，这样会得到n个元素的次小值，</span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">如此反复执行，便能得到一个有序序列了，建立最大堆时是从<strong>最后一个非叶子节点</strong>开始从下往上调整的（这句话可能不好太理解），下面会举一个例子来理解堆排序的基本思想</span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">&nbsp;</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">给一个无序序列如下</span></span></p>
+<div class="cnblogs_code">
+<pre><span style="color: rgba(0, 0, 255, 1)">int</span> a[<span style="color: rgba(128, 0, 128, 1)">6</span>] = {<span style="color: rgba(128, 0, 128, 1)">7</span>, <span style="color: rgba(128, 0, 128, 1)">3</span>, <span style="color: rgba(128, 0, 128, 1)">8</span>, <span style="color: rgba(128, 0, 128, 1)">5</span>, <span style="color: rgba(128, 0, 128, 1)">1</span>, <span style="color: rgba(128, 0, 128, 1)">2</span>};</pre>
+</div>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">现在可以根据数组将完全二叉树还原出来</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px"><img src="./heap_sort_files/1590962-20190319200859738-2035674348.png" alt=""></span></span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">好了，现在我们要做的事情就是要把7，3，8，5，1，2变成一个有序的序列，如果想要升序就是1，2，3，5，7，8 &nbsp; 如果想要降序就是8，7，5，3，2，1 ，这两种就是我们要的最终结果，然后我们就可以根据我们想要的结果来选择</span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">适合类型的堆来进行排序</span></span></p>
+<p align="left"><strong><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">升序----使用大顶堆</span></span></strong></p>
+<p align="left"><strong><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">降序----使用小顶堆</span></span></strong></p>
+<h2 align="left">5、为什么升序要用大顶堆呢<img src="./heap_sort_files/1590962-20190320193019581-502335912.jpg" alt="" width="115" height="115"></h2>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">上面提到过大顶堆的特点：每个结点的值都<strong>大于</strong>或<strong>等于</strong>其左右孩子结点的值，我们把<strong>大顶堆构建完毕后根节点的值一定是最大的，然后把根节点的和最后一个元素（也可以说最后一个节点）交换位置，那么末尾元素此时就是最大元素了（理解这点很重要）</strong></span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">知道了堆排序的原理下面就可以来操作了，在进行操作前先理清一下步骤</span></span></p>
+<p align="left">&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">（假设我们想要升序的排列）</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">第一步：先n个元素的无序序列，构建成大顶堆</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">第二步：将根节点与最后一个元素交换位置，（<strong>将最大元素"沉"到数组末端</strong>）</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">第三步：交换过后可能不再满足大顶堆的条件，所以需要将剩下的n-1个元素重新构建成大顶堆</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">第四步：重复第二步、第三步直到整个数组排序完成</span></span></p>
+<p align="left">&nbsp;</p>
+<h2 align="left">6、图解交换过程（得到升序序列，使用大顶堆来调整）</h2>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">这里以int a[6] =&nbsp;{7, 3, 8, 5, 1, 2}为例子</span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">先要找到最后一个非叶子节点，数组的长度为6，那么最后一个非叶子节点就是：<strong>长度/2-1</strong>，也就是6/2-1=2，然后下一步就是比较该节点值和它的子树值，如果该节点小于其左\右子树的值就交换（意思就是将最大的值放到该节点）</span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">8只有一个左子树，左子树的值为2，8&gt;2不需要调整</span></p>
+<p align="left">&nbsp;<img src="./heap_sort_files/1590962-20190319225953288-124096683.png" alt=""></p>
+<p align="left">&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">下一步，继续找到下一个非叶子节点（其实就是当前坐标-1就行了），该节点的值为3小于其左子树的值，交换值，交换后该节点值为5，大于其右子树的值，不需要交换</span></p>
+<p align="left"><img src="./heap_sort_files/1590962-20190319223444609-893547751.png" alt=""><img src="./heap_sort_files/1590962-20190319223808528-727625202.png" alt=""></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">下一步，继续找到下一个非叶子节点，该节点的值为7，大于其左子树的值，不需要交换，再看右子树，该节点的值小于右子树的值，需要交换值</span></p>
+<p align="left"><img src="./heap_sort_files/1590962-20190319224701750-2060561159.png" alt=""><img src="./heap_sort_files/1590962-20190319224845973-1645879973.png" alt=""></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">下一步，检查调整后的子树，是否满足大顶堆性质，如果不满足则继续调整（<span style="text-decoration: underline">这里因为只将右子树的值与根节点互换，<strong>只需要检查右子树是否满足</strong>，而7&gt;2刚好满足大顶堆的性质，就不需要调整了，</span></span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px"><span style="text-decoration: underline">如果运气不好整个树的根节点的值是1，那么就还需要调整右子树</span>）</span></p>
+<p align="left">&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">到这里大顶堆的构建就算完成了，然后下一步交换根节点<strong>（8）</strong>与最后一个元素<strong>（2）</strong>交换位置（<strong>将最大元素"沉"到数组末端</strong>），此时最大的元素就归位了，然后对剩下的5个元素重复上面的操作<br></span></span></p>
+<p align="left"><img src="./heap_sort_files/1590962-20190319225809386-1438405972.png" alt=""><strong><span style="font-family: 幼圆; font-size: 16px; color: rgba(255, 102, 0, 1)">（这里用粉红色来表示已经归位的元素）</span></strong></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">剩下只有5个元素，最后一个非叶子节点是5/2-1=1，该节点的值<strong>（5）</strong>大于左子树的值<strong>（3）</strong>也大于右子树的值<strong>（1）</strong>，满足大顶堆性质不需要交换</span></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px"><img src="./heap_sort_files/1590962-20190319230403047-1092897256.png" alt=""></span></span></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">找到下一个非叶子节点，该节点的值<strong>（2）</strong>小于左子树的值<strong>（5）</strong>，交换值，交换后<strong>左子树不再满足大顶堆的性质</strong>再调整左子树，左子树满足要求后再返回去看根节点，根节点的值<strong>（5）</strong>小于右子树的值<strong>（7）</strong>，再次交换值</span></p>
+<p align="left">&nbsp;<img src="./heap_sort_files/1590962-20190319230719066-322807057.png" alt=""><img src="./heap_sort_files/1590962-20190320191507683-1347447186.png" alt=""><img src="./heap_sort_files/1590962-20190320191738996-1518857283.png" alt=""></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">得到新的大顶堆，如下图，再把根节点的值<strong>（7）</strong>与当前数组最后一个元素值<strong>（1）</strong>交换，再重构大顶堆-&gt;交换值-&gt;重构大顶堆-&gt;交换值····，直到整个数组都变成<strong>有序序列</strong></span></p>
+<p align="left">&nbsp;<img src="./heap_sort_files/1590962-20190320192005825-324601414.png" alt=""><img src="./heap_sort_files/1590962-20190320192105624-1672355215.png" alt=""></p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">最后得到的升序序列如下图</span></p>
+<p align="left"><img src="./heap_sort_files/1590962-20190320192653859-1281304996.png" alt=""></p>
+<h2 align="left">7、堆排序的代码实现</h2>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">上面说了一大堆来详细说明堆排序的操作步骤，下面开始就开始来码代码了<img src="./heap_sort_files/1590962-20190320192947126-471469484.jpg" alt="" width="197" height="186"></span></p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">笔者将堆排序的过程分成了两个<strong>子函数</strong></span></span></p>
+<div class="cnblogs_code">
+<pre><span style="font-size: 15px"><span style="color: rgba(0, 0, 255, 1)">void</span> Swap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span> len);        <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 交换根节点和数组末尾元素的值 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 0, 255, 1)">void</span> BuildMaxHeap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span> len);<span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 构建大顶堆 </span><span style="color: rgba(0, 128, 0, 1)">*/</span></span></pre>
+</div>
+<p align="left">&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">先来实现构建大堆的部分：</span></p>
+<p align="left">&nbsp;</p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./heap_sort_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-size: 15px"><span style="color: rgba(0, 128, 128, 1)"> 1</span> <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> Function: 构建大顶堆 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)"> 2</span> <span style="color: rgba(0, 0, 255, 1)">void</span> BuildMaxHeap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
+</span><span style="color: rgba(0, 128, 128, 1)"> 3</span> <span style="color: rgba(0, 0, 0, 1)">{
+</span><span style="color: rgba(0, 128, 128, 1)"> 4</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> i;
+</span><span style="color: rgba(0, 128, 128, 1)"> 5</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)"> 6</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 7</span>     <span style="color: rgba(0, 0, 255, 1)">for</span> (i = len/<span style="color: rgba(128, 0, 128, 1)">2</span>-<span style="color: rgba(128, 0, 128, 1)">1</span>; i &gt;= <span style="color: rgba(128, 0, 128, 1)">0</span>; i--<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 128, 128, 1)"> 8</span> <span style="color: rgba(0, 0, 0, 1)">    {
+</span><span style="color: rgba(0, 128, 128, 1)"> 9</span>         <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>) &lt; len &amp;&amp; heap[i] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>])    <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 根节点小于左子树 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">10</span> <span style="color: rgba(0, 0, 0, 1)">        {
+</span><span style="color: rgba(0, 128, 128, 1)">11</span>             temp =<span style="color: rgba(0, 0, 0, 1)"> heap[i];
+</span><span style="color: rgba(0, 128, 128, 1)">12</span>             heap[i] = heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">13</span>             heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] =<span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">14</span>             <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 检查交换后的左子树是否满足大顶堆性质 如果不满足 则重新调整子树结构 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">15</span>             <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span>]) || (<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">]))
+</span><span style="color: rgba(0, 128, 128, 1)">16</span> <span style="color: rgba(0, 0, 0, 1)">            {
+</span><span style="color: rgba(0, 128, 128, 1)">17</span> <span style="color: rgba(0, 0, 0, 1)">                BuildMaxHeap(heap, len);
+</span><span style="color: rgba(0, 128, 128, 1)">18</span> <span style="color: rgba(0, 0, 0, 1)">            }
+</span><span style="color: rgba(0, 128, 128, 1)">19</span> <span style="color: rgba(0, 0, 0, 1)">        }
+</span><span style="color: rgba(0, 128, 128, 1)">20</span>         <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>) &lt; len &amp;&amp; heap[i] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>])    <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 根节点小于右子树 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">21</span> <span style="color: rgba(0, 0, 0, 1)">        {
+</span><span style="color: rgba(0, 128, 128, 1)">22</span>             temp =<span style="color: rgba(0, 0, 0, 1)"> heap[i];
+</span><span style="color: rgba(0, 128, 128, 1)">23</span>             heap[i] = heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">24</span>             heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>] =<span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">25</span>             <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 检查交换后的右子树是否满足大顶堆性质 如果不满足 则重新调整子树结构 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">26</span>             <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span>]) || (<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">]))
+</span><span style="color: rgba(0, 128, 128, 1)">27</span> <span style="color: rgba(0, 0, 0, 1)">            {
+</span><span style="color: rgba(0, 128, 128, 1)">28</span> <span style="color: rgba(0, 0, 0, 1)">                BuildMaxHeap(heap, len);
+</span><span style="color: rgba(0, 128, 128, 1)">29</span> <span style="color: rgba(0, 0, 0, 1)">            }
+</span><span style="color: rgba(0, 128, 128, 1)">30</span> <span style="color: rgba(0, 0, 0, 1)">        }
+</span><span style="color: rgba(0, 128, 128, 1)">31</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">32</span> }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./heap_sort_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p align="left">&nbsp;</p>
+<p>&nbsp;</p>
+<p><span style="font-size: 16px; font-family: 幼圆">上述代码中不易于理解的可能就是下面这条if判断语句</span></p>
+<div class="cnblogs_code">
+<pre><span style="font-size: 15px"> <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 检查交换后的左子树是否满足大顶堆性质 如果不满足 则重新调整子树结构 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+ <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span>]) || (<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">]))
+ {
+       BuildMaxHeap(heap, len);
+ }</span></span></pre>
+</div>
+<p><span style="font-family: 幼圆; font-size: 16px">&nbsp;把if里面的条件分来开看2*(2*i+1)+1 &lt; len的作用是判断该左子树有没有左子树（可能有点绕），heap[2*i+1] &lt; heap[2*(2*i+1)+1]就是判断左子树的左子树的值是否大于左子树，如果是，那么就意味着交换值</span></p>
+<p><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">过后左子树大顶堆的性质被破环了，需要重构该左子树</span></span></p>
+<p>&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆"><span style="font-size: 16px; line-height: 21.8182px">下面来实现交换部分</span></span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./heap_sort_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-size: 15px"><span style="color: rgba(0, 128, 128, 1)">1</span> <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> Function: 交换交换根节点和数组末尾元素的值</span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">2</span> <span style="color: rgba(0, 0, 255, 1)">void</span> Swap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
+</span><span style="color: rgba(0, 128, 128, 1)">3</span> <span style="color: rgba(0, 0, 0, 1)">{
+</span><span style="color: rgba(0, 128, 128, 1)">4</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">5</span> 
+<span style="color: rgba(0, 128, 128, 1)">6</span>     temp = heap[<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">7</span>     heap[<span style="color: rgba(128, 0, 128, 1)">0</span>] = heap[len-<span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">8</span>     heap[len-<span style="color: rgba(128, 0, 128, 1)">1</span>] =<span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">9</span> }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./heap_sort_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p align="left">&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">&nbsp;然后来考虑下主函数部分，因为是int a[6] = {7, 3, 8, 5, 1, 2}长度为6，需要构建大顶堆，交换值6次才能得到有序序列，由此可以确定主函数的for循环为,for (i = len; i &gt; 0; i--)</span></p>
+<div class="cnblogs_code"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./heap_sort_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><span style="font-size: 15px"><span style="color: rgba(0, 128, 128, 1)"> 1</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> main()
+</span><span style="color: rgba(0, 128, 128, 1)"> 2</span> <span style="color: rgba(0, 0, 0, 1)">{
+</span><span style="color: rgba(0, 128, 128, 1)"> 3</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> a[<span style="color: rgba(128, 0, 128, 1)">6</span>] = {<span style="color: rgba(128, 0, 128, 1)">7</span>, <span style="color: rgba(128, 0, 128, 1)">3</span>, <span style="color: rgba(128, 0, 128, 1)">8</span>, <span style="color: rgba(128, 0, 128, 1)">5</span>, <span style="color: rgba(128, 0, 128, 1)">1</span>, <span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">};
+</span><span style="color: rgba(0, 128, 128, 1)"> 4</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> len = <span style="color: rgba(128, 0, 128, 1)">6</span>;    <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 数组长度 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)"> 5</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> i;
+</span><span style="color: rgba(0, 128, 128, 1)"> 6</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 7</span>     <span style="color: rgba(0, 0, 255, 1)">for</span> (i = len; i &gt; <span style="color: rgba(128, 0, 128, 1)">0</span>; i--<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 128, 128, 1)"> 8</span> <span style="color: rgba(0, 0, 0, 1)">    {
+</span><span style="color: rgba(0, 128, 128, 1)"> 9</span> <span style="color: rgba(0, 0, 0, 1)">        BuildMaxHeap(a, i);
+</span><span style="color: rgba(0, 128, 128, 1)">10</span> <span style="color: rgba(0, 0, 0, 1)">        Swap(a, i);
+</span><span style="color: rgba(0, 128, 128, 1)">11</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">12</span>     <span style="color: rgba(0, 0, 255, 1)">for</span> (i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt; len; i++<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 128, 128, 1)">13</span> <span style="color: rgba(0, 0, 0, 1)">    {
+</span><span style="color: rgba(0, 128, 128, 1)">14</span>         printf(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%d </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, a[i]);
+</span><span style="color: rgba(0, 128, 128, 1)">15</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">16</span> 
+<span style="color: rgba(0, 128, 128, 1)">17</span>     <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">18</span> }</span></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="./heap_sort_files/copycode.gif" alt="复制代码"></a></span></div></div>
+<p>&nbsp;</p>
+<p align="left"><span style="font-family: 幼圆; font-size: 16px">下面附上堆排序完整代码：</span></p>
+<div class="cnblogs_code"><img src="./heap_sort_files/ContractedBlock.gif" alt="" id="code_img_closed_c789c6e2-9270-4d47-bf9b-2d3ca7751557" class="code_img_closed"><img src="./heap_sort_files/ExpandedBlockStart.gif" alt="" id="code_img_opened_c789c6e2-9270-4d47-bf9b-2d3ca7751557" class="code_img_opened" style="display: none">
+<div id="cnblogs_code_open_c789c6e2-9270-4d47-bf9b-2d3ca7751557" class="cnblogs_code_hide">
+<pre><span style="color: rgba(0, 128, 128, 1)"> 1</span> #include &lt;stdio.h&gt;
+<span style="color: rgba(0, 128, 128, 1)"> 2</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 3</span> <span style="color: rgba(0, 0, 255, 1)">void</span> Swap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span> len);        <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 交换根节点和数组末尾元素的值 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)"> 4</span> <span style="color: rgba(0, 0, 255, 1)">void</span> BuildMaxHeap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span> len);<span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 构建大顶堆 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)"> 5</span> 
+<span style="color: rgba(0, 128, 128, 1)"> 6</span> <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> main()
+</span><span style="color: rgba(0, 128, 128, 1)"> 7</span> <span style="color: rgba(0, 0, 0, 1)">{
+</span><span style="color: rgba(0, 128, 128, 1)"> 8</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> a[<span style="color: rgba(128, 0, 128, 1)">6</span>] = {<span style="color: rgba(128, 0, 128, 1)">7</span>, <span style="color: rgba(128, 0, 128, 1)">3</span>, <span style="color: rgba(128, 0, 128, 1)">8</span>, <span style="color: rgba(128, 0, 128, 1)">5</span>, <span style="color: rgba(128, 0, 128, 1)">1</span>, <span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">};
+</span><span style="color: rgba(0, 128, 128, 1)"> 9</span>     <span style="color: rgba(0, 0, 255, 1)">int</span> len = <span style="color: rgba(128, 0, 128, 1)">6</span>;    <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 数组长度 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">10</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> i;
+</span><span style="color: rgba(0, 128, 128, 1)">11</span> 
+<span style="color: rgba(0, 128, 128, 1)">12</span>     <span style="color: rgba(0, 0, 255, 1)">for</span> (i = len; i &gt; <span style="color: rgba(128, 0, 128, 1)">0</span>; i--<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 128, 128, 1)">13</span> <span style="color: rgba(0, 0, 0, 1)">    {
+</span><span style="color: rgba(0, 128, 128, 1)">14</span> <span style="color: rgba(0, 0, 0, 1)">        BuildMaxHeap(a, i);
+</span><span style="color: rgba(0, 128, 128, 1)">15</span> <span style="color: rgba(0, 0, 0, 1)">        Swap(a, i);
+</span><span style="color: rgba(0, 128, 128, 1)">16</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">17</span>     <span style="color: rgba(0, 0, 255, 1)">for</span> (i = <span style="color: rgba(128, 0, 128, 1)">0</span>; i &lt; len; i++<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 128, 128, 1)">18</span> <span style="color: rgba(0, 0, 0, 1)">    {
+</span><span style="color: rgba(0, 128, 128, 1)">19</span>         printf(<span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(128, 0, 0, 1)">%d </span><span style="color: rgba(128, 0, 0, 1)">"</span><span style="color: rgba(0, 0, 0, 1)">, a[i]);
+</span><span style="color: rgba(0, 128, 128, 1)">20</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">21</span> 
+<span style="color: rgba(0, 128, 128, 1)">22</span>     <span style="color: rgba(0, 0, 255, 1)">return</span> <span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">;
+</span><span style="color: rgba(0, 128, 128, 1)">23</span> <span style="color: rgba(0, 0, 0, 1)">}
+</span><span style="color: rgba(0, 128, 128, 1)">24</span> <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> Function: 构建大顶堆 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">25</span> <span style="color: rgba(0, 0, 255, 1)">void</span> BuildMaxHeap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
+</span><span style="color: rgba(0, 128, 128, 1)">26</span> <span style="color: rgba(0, 0, 0, 1)">{
+</span><span style="color: rgba(0, 128, 128, 1)">27</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> i;
+</span><span style="color: rgba(0, 128, 128, 1)">28</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">29</span> 
+<span style="color: rgba(0, 128, 128, 1)">30</span>     <span style="color: rgba(0, 0, 255, 1)">for</span> (i = len/<span style="color: rgba(128, 0, 128, 1)">2</span>-<span style="color: rgba(128, 0, 128, 1)">1</span>; i &gt;= <span style="color: rgba(128, 0, 128, 1)">0</span>; i--<span style="color: rgba(0, 0, 0, 1)">)
+</span><span style="color: rgba(0, 128, 128, 1)">31</span> <span style="color: rgba(0, 0, 0, 1)">    {
+</span><span style="color: rgba(0, 128, 128, 1)">32</span>         <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>) &lt; len &amp;&amp; heap[i] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>])    <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 根节点大于左子树 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">33</span> <span style="color: rgba(0, 0, 0, 1)">        {
+</span><span style="color: rgba(0, 128, 128, 1)">34</span>             temp =<span style="color: rgba(0, 0, 0, 1)"> heap[i];
+</span><span style="color: rgba(0, 128, 128, 1)">35</span>             heap[i] = heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">36</span>             heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] =<span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">37</span>             <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 检查交换后的左子树是否满足大顶堆性质 如果不满足 则重新调整子树结构 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">38</span>             <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span>]) || (<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">1</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">]))
+</span><span style="color: rgba(0, 128, 128, 1)">39</span> <span style="color: rgba(0, 0, 0, 1)">            {
+</span><span style="color: rgba(0, 128, 128, 1)">40</span> <span style="color: rgba(0, 0, 0, 1)">                BuildMaxHeap(heap, len);
+</span><span style="color: rgba(0, 128, 128, 1)">41</span> <span style="color: rgba(0, 0, 0, 1)">            }
+</span><span style="color: rgba(0, 128, 128, 1)">42</span> <span style="color: rgba(0, 0, 0, 1)">        }
+</span><span style="color: rgba(0, 128, 128, 1)">43</span>         <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>) &lt; len &amp;&amp; heap[i] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>])    <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 根节点大于右子树 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">44</span> <span style="color: rgba(0, 0, 0, 1)">        {
+</span><span style="color: rgba(0, 128, 128, 1)">45</span>             temp =<span style="color: rgba(0, 0, 0, 1)"> heap[i];
+</span><span style="color: rgba(0, 128, 128, 1)">46</span>             heap[i] = heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">47</span>             heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>] =<span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">48</span>             <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> 检查交换后的右子树是否满足大顶堆性质 如果不满足 则重新调整子树结构 </span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">49</span>             <span style="color: rgba(0, 0, 255, 1)">if</span> ((<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">1</span>]) || (<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span> &lt; len &amp;&amp; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>] &lt; heap[<span style="color: rgba(128, 0, 128, 1)">2</span>*(<span style="color: rgba(128, 0, 128, 1)">2</span>*i+<span style="color: rgba(128, 0, 128, 1)">2</span>)+<span style="color: rgba(128, 0, 128, 1)">2</span><span style="color: rgba(0, 0, 0, 1)">]))
+</span><span style="color: rgba(0, 128, 128, 1)">50</span> <span style="color: rgba(0, 0, 0, 1)">            {
+</span><span style="color: rgba(0, 128, 128, 1)">51</span> <span style="color: rgba(0, 0, 0, 1)">                BuildMaxHeap(heap, len);
+</span><span style="color: rgba(0, 128, 128, 1)">52</span> <span style="color: rgba(0, 0, 0, 1)">            }
+</span><span style="color: rgba(0, 128, 128, 1)">53</span> <span style="color: rgba(0, 0, 0, 1)">        }
+</span><span style="color: rgba(0, 128, 128, 1)">54</span> <span style="color: rgba(0, 0, 0, 1)">    }
+</span><span style="color: rgba(0, 128, 128, 1)">55</span> <span style="color: rgba(0, 0, 0, 1)">}
+</span><span style="color: rgba(0, 128, 128, 1)">56</span> 
+<span style="color: rgba(0, 128, 128, 1)">57</span> <span style="color: rgba(0, 128, 0, 1)">/*</span><span style="color: rgba(0, 128, 0, 1)"> Function: 交换交换根节点和数组末尾元素的值</span><span style="color: rgba(0, 128, 0, 1)">*/</span>
+<span style="color: rgba(0, 128, 128, 1)">58</span> <span style="color: rgba(0, 0, 255, 1)">void</span> Swap(<span style="color: rgba(0, 0, 255, 1)">int</span> *heap, <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> len)
+</span><span style="color: rgba(0, 128, 128, 1)">59</span> <span style="color: rgba(0, 0, 0, 1)">{
+</span><span style="color: rgba(0, 128, 128, 1)">60</span>     <span style="color: rgba(0, 0, 255, 1)">int</span><span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">61</span> 
+<span style="color: rgba(0, 128, 128, 1)">62</span>     temp = heap[<span style="color: rgba(128, 0, 128, 1)">0</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">63</span>     heap[<span style="color: rgba(128, 0, 128, 1)">0</span>] = heap[len-<span style="color: rgba(128, 0, 128, 1)">1</span><span style="color: rgba(0, 0, 0, 1)">];
+</span><span style="color: rgba(0, 128, 128, 1)">64</span>     heap[len-<span style="color: rgba(128, 0, 128, 1)">1</span>] =<span style="color: rgba(0, 0, 0, 1)"> temp;
+</span><span style="color: rgba(0, 128, 128, 1)">65</span> }</pre>
+</div>
+<span class="cnblogs_code_collapse">View Code</span></div>
+<p><span style="font-family: 幼圆; font-size: 16px">运行结果：</span></p>
+<p><img src="./heap_sort_files/1590962-20190321193650748-1679786419.jpg" alt=""></p>
+<p align="left"><span style="text-decoration: underline"><span style="font-family: 幼圆; font-size: 16px">虽然STL模板库给我们提供了两种简单方便堆操作的方式，很多高级语言的也有很多常见数据结构的封装，笔者还是建议需要学习数据结构相关的内容，至少要了解不同的数据结构</span></span></p>
+<p align="left"><span style="text-decoration: underline"><span style="font-family: 幼圆; font-size: 16px">避免在使用高级语言的封装好的数据结构时出现只会用不理解的尴尬情况····</span></span></p>
+<p align="left">&nbsp;</p>
+</div>
+<div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block"><div id="BlogPostCategory">
+    分类: 
+            <a href="https://www.cnblogs.com/lanhaicode/category/1386847.html" target="_blank">排序算法</a></div>
+<div id="EntryTag">
+    标签: 
+            <a href="https://www.cnblogs.com/lanhaicode/tag/%E5%A0%86%E6%8E%92%E5%BA%8F/">堆排序</a></div>
+
+    <div id="blog_post_info">
+<div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(10546257,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+        <a id="green_channel_follow" onclick="follow(&#39;3202a22e-2e2b-4818-7798-08d67da21df7&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./heap_sort_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./heap_sort_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/lanhaicode/" target="_blank"><img src="./heap_sort_files/20190810203731.png" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="https://home.cnblogs.com/u/lanhaicode/">蓝海人</a><br>
+            <a href="https://home.cnblogs.com/u/lanhaicode/followees/">关注 - 13</a><br>
+            <a href="https://home.cnblogs.com/u/lanhaicode/followers/">粉丝 - 145</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;3202a22e-2e2b-4818-7798-08d67da21df7&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(10546257,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">66</span>
+    </div>
+    <div class="buryit" onclick="votePost(10546257,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">12</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+    <div class="clear"></div>
+    <div id="post_next_prev">
+
+    <a href="https://www.cnblogs.com/lanhaicode/p/10546514.html" class="p_n_p_prefix">« </a> 上一篇：    <a href="https://www.cnblogs.com/lanhaicode/p/10546514.html" title="发布于 2019-03-18 19:29">预处理命令使用详解----#if、#endif、#undef、#ifdef、#else、#elif</a>
+    <br>
+    <a href="https://www.cnblogs.com/lanhaicode/p/10575049.html" class="p_n_p_prefix">» </a> 下一篇：    <a href="https://www.cnblogs.com/lanhaicode/p/10575049.html" title="发布于 2019-03-23 19:40">关于scanf、getchar、getch、getche缓冲区分析——C语言</a>
+
+</div>
+</div>
+            </div>
+            <div class="postDesc">posted @ 
+<span id="post-date">2019-03-20 21:28</span>&nbsp;
+<a href="https://www.cnblogs.com/lanhaicode/">蓝海人</a>&nbsp;
+阅读(<span id="post_view_count">106938</span>)&nbsp;
+评论(<span id="post_comment_count">31</span>)&nbsp;
+<a href="https://i.cnblogs.com/EditPosts.aspx?postid=10546257" rel="nofollow">编辑</a>&nbsp;
+<a href="javascript:void(0)" onclick="AddToWz(10546257);return false;">收藏</a></div>
+        </div>
+	    
+	    
+    </div><!--end: topics 文章、评论容器-->
+</div>
+<script src="./heap_sort_files/highlight.min.js.下载"></script>
+<script>markdown_highlight();</script>
+<script>
+    var allowComments = true, cb_blogId = 489152, cb_blogApp = 'lanhaicode', cb_blogUserGuid = '3202a22e-2e2b-4818-7798-08d67da21df7';
+    var cb_entryId = 10546257, cb_entryCreatedDate = '2019-03-20 21:28', cb_postType = 1;
+    updatePostStats(
+        [cb_entryId],
+        function(id, count) { $("#post_view_count").text(count) },
+        function(id, count) { $("#post_comment_count").text(count) })
+    zoomManager.apply("#cnblogs_post_body img:not(.code_img_closed):not(.code_img_opened)");
+</script>
+<a name="!comments"></a>
+<div id="blog-comments-placeholder"></div>
+<div id="comment_form" class="commentform">
+    <a name="commentform"></a>
+    <div id="divCommentShow"></div>
+    <div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/lanhaicode/p/10546257.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/lanhaicode/p/10546257.html#top">返回顶部</a></div>
+    <div id="comment_form_container" style="visibility: visible;"><div class="login_tips">
+    登录后才能查看或发表评论，立即 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return account.login(&#39;!comments&#39;);">登录</a> 或者
+    <a href="https://www.cnblogs.com/">逛逛</a> 博客园首页
+</div>
+</div>
+    <div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+    <div id="ad_t2"><a href="https://www.aliyun.com/activity/daily/bestoffer?userCode=swh7dvlt" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-阿里云-cps&#39;)">【推荐】阿里云爆品销量榜单出炉，精选爆款产品低至0.55折</a><br><a href="https://brands.cnblogs.com/huawei" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-华为专区&#39;)">【推荐】7大类400多种组件，HarmonyOS鸿蒙三方库来了，赶紧收藏！</a><br><a href="http://www.uccpsoft.com/index.htm" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-ucancode&#39;)">【推荐】大型组态、工控、仿真、CAD\GIS 50万行VC++源码免费下载!</a><br><a href="http://www.moojnn.com/?source=bokeyuan" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-魔镜&#39;)">【推荐】限时秒杀！国云大数据魔镜，企业级云分析平台</a><br></div>
+    <div id="opt_under_post"></div>
+    <div id="cnblogs_c1" class="under-post-card">
+        <div id="div-gpt-ad-1592365906576-0" style="width: 300px; height: 250px;" data-google-query-id="COXmjtyXyPACFchkvAodvrkPaw"><div id="google_ads_iframe_/1090369/C1_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C1_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C1_0" width="300" height="250" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" allow="conversion-measurement &#39;src&#39;" data-google-container-id="1" style="border: 0px; vertical-align: bottom;" data-load-complete="true" src="./heap_sort_files/saved_resource.html"></iframe></div></div>
+    </div>
+    <div id="under_post_card1"><div class="under-post-card"><b>园子动态</b>：<br>· <a href="https://www.cnblogs.com/cmt/p/14585828.html" target="_blank">致园友们的一封检讨书：都是我们的错</a><br>· <a href="https://www.cnblogs.com/cmt/p/14595262.html" target="_blank">数据库实例 CPU 100% 引发全站故障</a><br>· <a href="https://www.cnblogs.com/cmt/p/14217355.html" target="_blank">发起一个开源项目：博客引擎 fluss</a><br></div></div>
+    <div id="cnblogs_c2" class="under-post-card">
+        <div id="div-gpt-ad-1592366332455-0" style="width: 468px; height: 60px;" data-google-query-id="CObmjtyXyPACFchkvAodvrkPaw"><div id="google_ads_iframe_/1090369/C2_0__container__" style="border: 0pt none;"><iframe id="google_ads_iframe_/1090369/C2_0" title="3rd party ad content" name="google_ads_iframe_/1090369/C2_0" width="468" height="60" scrolling="no" marginwidth="0" marginheight="0" frameborder="0" allow="conversion-measurement &#39;src&#39;" data-google-container-id="2" style="border: 0px; vertical-align: bottom;" data-load-complete="true" src="./heap_sort_files/saved_resource(1).html"></iframe></div></div>
+    </div>
+    <div id="under_post_card2"><div class="itnews under-post-card">
+    <b>最新新闻</b>：
+    <br>
+ ·          <a href="https://news.cnblogs.com/n/693817/" target="_blank">媒体实测理想ONE紧急制动：系统识别出行人 依旧未制动硬撞</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693816/" target="_blank">我国首条小卫星智能生产线首颗卫星下线！卫星批产时代来临</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693815/" target="_blank">炒狗屎炒到财务自由 玩表情包玩到倾家荡产 这波财富密码都是什么鬼?</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693814/" target="_blank">支付牌照再获成功续展！支付宝：感谢央行的信任和认可</a>
+        <br>
+ ·          <a href="https://news.cnblogs.com/n/693813/" target="_blank">看齐华为不造整车！腾讯自动驾驶专利曝光：提高控制实时性</a>
+        <br>
+    » <a href="https://news.cnblogs.com/" title="IT 新闻" target="_blank">更多新闻...</a>
+</div></div>
+    <div id="HistoryToday" class="under-post-card"></div>
+    <script type="text/javascript">
+       var commentManager = new blogCommentManager();
+       commentManager.renderComments(0);
+       fixPostBody();
+       deliverBigBanner();
+setTimeout(function() { incrementViewCount(cb_entryId); }, 50);       deliverT2();
+       deliverC1C2();
+       loadNewsAndKb();
+       loadBlogSignature();
+LoadPostCategoriesTags(cb_blogId, cb_entryId);       LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+       GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+       loadOptUnderPost();
+       GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    </script>
+</div>
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+	<div id="sideBar">
+		<div id="sideBarMain">
+			<div id="sidebar_news" class="newsItem"><!--done-->
+<h3 class="catListTitle">公告</h3>
+
+<div id="blog-news">
+    <a href="https://www.cnblogs.com/lanhaicode/"><img src="./heap_sort_files/o_4.jpg" alt="蓝海人的头像" class="img_avatar" width="230px" style="border-radius:50%"></a><a>
+Attention、Anti-interference
+
+
+
+<link type="text/css" rel="stylesheet" href="./heap_sort_files/comment.css">
+<script type="text/javascript">window['__document_write_ajax_callbacks__']['3']();</script><script type="text/javascript">window['__document_write_ajax_callbacks__']['1']();</script>
+    </a><div id="profile_block"><a>
+        昵称：
+        </a><a href="https://home.cnblogs.com/u/lanhaicode/">
+            蓝海人
+        </a>
+        <br>
+        园龄：
+        <a href="https://home.cnblogs.com/u/lanhaicode/" title="入园时间：2019-01-19">
+            2年3个月
+        </a>
+        <br>
+        粉丝：
+        <a href="https://home.cnblogs.com/u/lanhaicode/followers/">
+            145
+        </a>
+        <br>
+        关注：
+        <a href="https://home.cnblogs.com/u/lanhaicode/followees/">
+            13
+        </a>
+        <div id="p_b_follow">
+<a href="javascript:void(0)" onclick="follow(&#39;3202a22e-2e2b-4818-7798-08d67da21df7&#39;)">+加关注</a></div>
+        <script type="text/javascript">window['__document_write_ajax_callbacks__']['4']();</script><script>window['__document_write_ajax_callbacks__']['2']();</script>
+    </div>
+</div>
+
+</div>
+<div id="sidebar_c3"></div>
+			<div id="blog-calendar" style="">
+
+<table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar" border="0">
+    <tbody>
+        <tr>
+            <td colspan="7">
+                <table class="CalTitle" cellspacing="0" border="0">
+                    <tbody>
+                        <tr>
+                            <td class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2021/04/14&#39;); return false;">&lt;</a>
+                            </td>
+                            <td align="center">2021年5月</td>
+                            <td align="right" class="CalNextPrev">
+                                <a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2021/06/14&#39;); return false;">&gt;</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+    <tr>
+        <th class="CalDayHeader" align="center" abbr="日" scope="col">日</th>
+        <th class="CalDayHeader" align="center" abbr="一" scope="col">一</th>
+        <th class="CalDayHeader" align="center" abbr="二" scope="col">二</th>
+        <th class="CalDayHeader" align="center" abbr="三" scope="col">三</th>
+        <th class="CalDayHeader" align="center" abbr="四" scope="col">四</th>
+        <th class="CalDayHeader" align="center" abbr="五" scope="col">五</th>
+        <th class="CalDayHeader" align="center" abbr="六" scope="col">六</th>
+    </tr>
+            <tr>
+                            <td class="CalOtherMonthDay" align="center">25</td>
+                            <td class="CalOtherMonthDay" align="center">26</td>
+                            <td class="CalOtherMonthDay" align="center">27</td>
+                            <td class="CalOtherMonthDay" align="center">28</td>
+                            <td class="CalOtherMonthDay" align="center">29</td>
+                            <td class="CalOtherMonthDay" align="center">30</td>
+                    <td class="CalWeekendDay" align="center">
+                        1
+                    </td>
+            </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            2
+                        </td>
+                            <td class="" align="center">
+                                3
+                            </td>
+                            <td class="" align="center">
+                                4
+                            </td>
+                            <td class="" align="center">
+                                5
+                            </td>
+                            <td class="" align="center">
+                                6
+                            </td>
+                            <td class="" align="center">
+                                7
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            8
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            9
+                        </td>
+                            <td class="" align="center">
+                                10
+                            </td>
+                            <td class="" align="center">
+                                11
+                            </td>
+                            <td class="" align="center">
+                                12
+                            </td>
+                            <td class="" align="center">
+                                13
+                            </td>
+                            <td class="CalTodayDay" align="center">
+                                14
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            15
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            16
+                        </td>
+                            <td class="" align="center">
+                                17
+                            </td>
+                            <td class="" align="center">
+                                18
+                            </td>
+                            <td class="" align="center">
+                                19
+                            </td>
+                            <td class="" align="center">
+                                20
+                            </td>
+                            <td class="" align="center">
+                                21
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            22
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            23
+                        </td>
+                            <td class="" align="center">
+                                24
+                            </td>
+                            <td class="" align="center">
+                                25
+                            </td>
+                            <td class="" align="center">
+                                26
+                            </td>
+                            <td class="" align="center">
+                                27
+                            </td>
+                            <td class="" align="center">
+                                28
+                            </td>
+                        <td class="CalWeekendDay" align="center">
+                            29
+                        </td>
+                </tr>
+                <tr>
+                        <td class="CalWeekendDay" align="center">
+                            30
+                        </td>
+                            <td class="" align="center">
+                                31
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                1
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                2
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                3
+                            </td>
+                            <td class="CalOtherMonthDay" align="center">
+                                4
+                            </td>
+                        <td class="CalOtherMonthDay" align="center">
+                            5
+                        </td>
+                </tr>
+    </tbody>
+</table></div><script>loadBlogDefaultCalendar();</script>			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><!-- 搜索 -->
+<div id="sidebar_search" class="sidebar-block">
+    <div id="sidebar_search" class="mySearch">
+        <h3 class="catListTitle">搜索</h3>
+        <div id="sidebar_search_box">
+            <div id="widget_my_zzk" class="div_my_zzk">
+                <input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk">
+            </div>
+            <div id="widget_my_google" class="div_my_zzk">
+                <input type="text" name="google_q" id="google_q" onkeydown="return google_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="google_go()" type="button" value="谷歌搜索" class="btn_my_zzk">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 常用链接 -->
+<div id="sidebar_shortcut" class="sidebar-block"><div class="catListLink">
+<h3 class="catListTitle">
+常用链接
+</h3>
+<ul>
+    
+<li><a href="https://www.cnblogs.com/lanhaicode/p/" title="我的博客的随笔列表">我的随笔</a></li>
+<li><a href="https://www.cnblogs.com/lanhaicode/MyComments.html" title="我的发表过的评论列表">我的评论</a></li>
+<li><a href="https://www.cnblogs.com/lanhaicode/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li>
+<li><a href="https://www.cnblogs.com/lanhaicode/RecentComments.html" title="我的博客的评论列表">最新评论</a></li>
+<li><a href="https://www.cnblogs.com/lanhaicode/tag/" title="我的博客的标签列表">我的标签</a></li>
+
+</ul>
+</div>
+
+</div>
+
+<!-- 最新随笔 -->
+
+
+<!-- 我的标签 -->
+
+
+<!-- 积分与排名 -->
+
+
+<!-- 随笔分类、随笔档案、文章分类、新闻分类、相册、链接 -->
+<div id="sidebar_categories">
+
+    <div id="sidebar_postcategory" class="catListPostCategory sidebar-block">
+        <h3 class="catListTitle">
+            
+随笔分类
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/category/1394425.html" rel="" target="">
+    C(26)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/category/1511391.html" rel="" target="">
+    C Game(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/category/1504925.html" rel="" target="">
+    PHP(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/category/1386847.html" rel="" target="">
+    排序算法(6)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/category/1387721.html" rel="" target="">
+    数据结构(8)
+</a>
+ 
+
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+    <div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+        <h3 class="catListTitle">
+            
+随笔档案
+
+
+
+        </h3>
+
+        <ul>
+
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2020/12.html" rel="" target="">
+    2020年12月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/10.html" rel="" target="">
+    2019年10月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/08.html" rel="" target="">
+    2019年8月(3)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/07.html" rel="" target="">
+    2019年7月(6)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/05.html" rel="" target="">
+    2019年5月(1)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/04.html" rel="" target="">
+    2019年4月(11)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/03.html" rel="" target="">
+    2019年3月(10)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/02.html" rel="" target="">
+    2019年2月(5)
+</a>
+ 
+
+                </li>                
+                <li data-category-list-item-visible="true" style="display: block">
+                    
+<a href="https://www.cnblogs.com/lanhaicode/archive/2019/01.html" rel="" target="">
+    2019年1月(4)
+</a>
+ 
+
+                </li>                
+            
+        </ul>
+
+
+    </div>    
+</div>
+
+<!-- 最新评论 -->
+<div id="sidebar_recentcomments" class="sidebar-block"><div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div class="RecentCommentBlock">
+        <ul>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/lanhaicode/p/10546257.html">1. Re:堆排序（大顶堆、小顶堆）----C语言</a></li>
+                    <li class="recent_comment_body">这篇文章写的很好，讲解详细，感谢作者 ~ 但我发现 BuildMaxHeap(int *heap, int len) 这个方法里的递归设计不太好，若发生了递归调用，则再次执行BuildMaxHeap方...</li>
+                    <li class="recent_comment_author">--Killer-V</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/lanhaicode/p/10620028.html">2. Re:枚举类型enum详解——C语言</a></li>
+                    <li class="recent_comment_body"><p>谢谢分享</p>
+</li>
+                    <li class="recent_comment_author">--小珍妮</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/lanhaicode/p/10358736.html">3. Re:二叉树、前序遍历、中序遍历、后序遍历</a></li>
+                    <li class="recent_comment_body"><p>666</p>
+</li>
+                    <li class="recent_comment_author">--程序员薛师兄</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/lanhaicode/p/10546257.html">4. Re:堆排序（大顶堆、小顶堆）----C语言</a></li>
+                    <li class="recent_comment_body"><p>另一种代码实现思路如下：<br>
+<a href="https://www.cnblogs.com/lanhaicode/p/10546257.html" target="blank"></a></p>
+</li>
+                    <li class="recent_comment_author">--poterliu</li>
+                    <li class="recent_comment_title"><a href="https://www.cnblogs.com/lanhaicode/p/10304567.html">5. Re:链表（单向链表的建立、删除、插入、打印）</a></li>
+                    <li class="recent_comment_body"><p>很清晰，棒(๑•̀ㅂ•́)و✧</p>
+</li>
+                    <li class="recent_comment_author">--天使不设防</li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+
+<!-- 阅读排行榜 -->
+<div id="sidebar_topviewedposts" class="sidebar-block"><div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10546257.html">
+                            1. 堆排序（大顶堆、小顶堆）----C语言(106929)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10390147.html">
+                            2. 二叉树的遍历（前序、中序、后序、已知前中序求后序、已知中后序求前序）(48667)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10304567.html">
+                            3. 链表（单向链表的建立、删除、插入、打印）(45401)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10358736.html">
+                            4. 二叉树、前序遍历、中序遍历、后序遍历(39506)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10620028.html">
+                            5. 枚举类型enum详解——C语言(29507)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<!-- 评论排行榜 -->
+<div id="sidebar_topcommentedposts" class="sidebar-block"><div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock">
+        <ul style="word-break:break-all">
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10546257.html">
+                            1. 堆排序（大顶堆、小顶堆）----C语言(31)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/11321243.html">
+                            2. AVL树（查找、插入、删除）——C语言(9)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10304567.html">
+                            3. 链表（单向链表的建立、删除、插入、打印）(8)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/10719876.html">
+                            4. C语言小程序——推箱子（窄字符和宽字符）(4)
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.cnblogs.com/lanhaicode/p/14066829.html">
+                            5. 结膜炎与干眼症——后记(3)
+                        </a>
+                    </li>
+        </ul>
+    </div>
+</div>
+
+</div>
+
+<!-- 推荐排行榜 -->
+<div id="sidebar_topdiggedposts" class="sidebar-block">
+<div id="topdigg_posts_wrap">
+    <div class="catListView">
+        <h3 class="catListTitle">推荐排行榜</h3>
+        <div id="TopDiggPostsBlock">
+            <ul style="word-break: break-all">
+                        <li>
+                            <a href="https://www.cnblogs.com/lanhaicode/p/10546257.html">
+                                1. 堆排序（大顶堆、小顶堆）----C语言(66)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/lanhaicode/p/10304567.html">
+                                2. 链表（单向链表的建立、删除、插入、打印）(34)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/lanhaicode/p/10390147.html">
+                                3. 二叉树的遍历（前序、中序、后序、已知前中序求后序、已知中后序求前序）(28)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/lanhaicode/p/10776166.html">
+                                4. 逆波兰表达式——中缀表达式转后缀表达式(23)
+                            </a>
+                        </li>
+                        <li>
+                            <a href="https://www.cnblogs.com/lanhaicode/p/10620028.html">
+                                5. 枚举类型enum详解——C语言(18)
+                            </a>
+                        </li>
+            </ul>
+        </div>
+    </div>
+</div></div></div>
+                    <script>loadBlogSideColumn();</script>
+			</div>			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		<!--done-->
+Copyright © 2021 蓝海人
+<br><span id="poweredby">Powered by .NET 5.0 on Kubernetes</span>
+
+
+
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+    <div id="page_end_html">
+        <script type="text/javascript" language="javascript">
+　　//Setting ico for cnblogs
+　　var linkObject = document.createElement('link');
+　　linkObject.rel = "shortcut icon";
+　　linkObject.href = "https://files-cdn.cnblogs.com/files/lanhaicode/logo.ico";
+　　document.getElementsByTagName("head")[0].appendChild(linkObject);
+</script>
+    </div>
+
+    <input type="hidden" id="antiforgery_token" value="CfDJ8L-rpLgFVEJMgssCVvNUAjvmTipPkv4r50Cgy8SChREgye5kFHSqTCBymmriKB1ieaT2Mj4O1uH_pNAhgQpG2f0oSOmuWf33dzIGb5FotYj2pZQAi3xH8u8Ou7V8JBrl5nboWFzGO_Qsx964v4t-Lbw">
+
+
+<script type="text/javascript">
+$(function(){
+    $('#blogTitle h1').addClass('bounceInLeft animated');
+    $('#blogTitle h2').addClass('bounceInRight animated');
+    // 删除反对按钮    $('.buryit').remove();
+    initCommentData();
+});
+function initCommentData() {
+    $('.feedbackItem').each(function() {
+        var text = $(this).find('.feedbackListSubtitle .layer').text();
+        // 将楼层信息放到data里面
+        // $(this).find('.blog_comment_body').attr('data-louceng', text.replace(/^#/g, ''));
+        if($(this).find('.feedbackListSubtitle .louzhu').length>0) $(this).addClass('myself');
+        var avatar = $(this).find('> .feedbackCon > span').html() || 'http://pic.cnitblog.com/face/sample_face.gif';
+        $(this).find('> .feedbackCon > .blog_comment_body').append('<img class="user-avatar" src="'+avatar+'"/>')
+    });
+}
+
+$(document).ajaxComplete(function(event, xhr, settings) {
+  // 监听获取评论ajax事件
+  if(settings.url.indexOf('/mvc/blog/GetComments.aspx') >= 0) {
+    initCommentData();
+  }
+});
+</script><script type="text/javascript">getFollowStatus('3202a22e-2e2b-4818-7798-08d67da21df7');</script><iframe id="google_osd_static_frame_6526233015939" name="google_osd_static_frame" style="display: none; width: 0px; height: 0px;" src="./heap_sort_files/saved_resource(2).html"></iframe></body></html>
